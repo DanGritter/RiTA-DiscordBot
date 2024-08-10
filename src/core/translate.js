@@ -3,11 +3,13 @@
 // -----------------
 
 // codebeat:disable[LOC,ABC,BLOCK_NESTING,ARITY]
-const translate = require("google-translate-api");
+const {Translate} = require("@google-cloud/translate").v2;
 const db = require("./db");
 const botSend = require("./send");
 const fn = require("./helpers");
+const auth = require("./auth");
 
+const translate = new Translate({key: auth.gcpapikey});
 // ------------------------------------------
 // Fix broken Discord tags after translation
 // (Emojis, Mentions, Channels)
@@ -16,6 +18,7 @@ const fn = require("./helpers");
 
 const translateFix = function(string)
 {
+   console.log("translateFix= "+string)
    const normal = /(<[@#!$%&*])\s*/gim;
    const nick = /(<[@#!$%&*]!)\s*/gim;
    const role = /(<[@#!$%&*]&)\s*/gim;
@@ -74,13 +77,12 @@ const bufferChains = function(data, from)
    {
       const chainMsgs = chain.msgs.join("\n");
       const to = data.translate.to.valid[0].iso;
-
-      translate(chainMsgs, {
-         to: to,
-         from: from
-      }).then(res =>
+      translate.translate(chainMsgs, 
+	      {to: to, from:
+         from}).then(res =>
       {
-         const output = translateFix(res.text);
+         console.log(res);
+         const output = translateFix(res[1].data.translations[0].translatedText);
 
          getUserColor(chain, function(gotData)
          {
@@ -269,13 +271,15 @@ module.exports = function(data) //eslint-disable-line complexity
 
       data.translate.to.valid.forEach(lang =>
       {
-         translate(data.translate.original, {
+         console.log(data.translate.original,lang.iso,from);
+         translate.translate(data.translate.original, {
             to: lang.iso,
             from: from
          }).then(res =>
          {
+            console.log(res);
             const title = `\`\`\`LESS\n ${lang.name} (${lang.native}) \`\`\`\n`;
-            const output = "\n" + title + translateFix(res.text) + "\n";
+            const output = "\n" + title + translateFix(res[1].data.translations[0].translatedText) + "\n";
             return translateBuffer[bufferID].update(output, data);
          });
       });
@@ -302,13 +306,14 @@ module.exports = function(data) //eslint-disable-line complexity
 
    textArray.forEach(chunk =>
    {
-      translate(chunk, opts).then(res =>
+	   console.log("opts = "+opts);
+      translate.translate(chunk, opts).then(res =>
       {
          updateServerStats(data.message);
          data.forward = fw;
          data.footer = ft;
          data.color = data.message.roleColor;
-         data.text = translateFix(res.text);
+         data.text = translateFix(res[1].data.translations[0].translatedText);
          data.showAuthor = true;
          return getUserColor(data, botSend);
       });

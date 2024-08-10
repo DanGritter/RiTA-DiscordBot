@@ -478,11 +478,10 @@ const embedOff = function(data)
             {
                // You can rename 'Webhook' to the name of your bot if you like, people will see if under the webhooks tab of the channel.
                existingWebhook = webhooks.find(x => x.name === webHookName);
-               const webHookURL = "https://ritabot.org/index/images/favicon.png"
 
                if (!existingWebhook)
                {
-                  channel.createWebhook(webHookName, webHookURL)
+                  channel.createWebhook(webHookName)
                      .then(newWebhook =>
                      {
                         // Finally send the webhook

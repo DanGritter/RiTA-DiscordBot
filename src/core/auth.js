@@ -7,6 +7,7 @@
 
 exports.token = process.env.DISCORD_TOKEN;
 
+exports.gcpapikey = process.env.GCP_API_KEY;
 // ----------------------------------------------------------------------
 // Add your Discord Main User ID here
 // In Discord, Go to Settings > Appearance > Enable Developer Mode

@@ -95,7 +95,7 @@ const errorLog = function(error, subtype)
    {
       errorTitle = errorTypes[subtype];
    }
-
+   console.log(error.toString());
    hookSend({
       title: errorTitle,
       color: "err",

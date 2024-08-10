@@ -3,7 +3,11 @@
 // -----------------
 
 // codebeat:disable[LOC,ABC,BLOCK_NESTING,ARITY]
-const translate = require("google-translate-api");
+const auth = require("./auth");
+
+const {Translate} = require("@google-cloud/translate").v2;
+const translate = new Translate({key: auth.gcpapikey});
+
 const ISO6391 = require("iso-639-1");
 const fn = require("./helpers");
 
@@ -93,8 +97,6 @@ module.exports = function(lang, single = false)
    {
       const langISO = getLangISO(language.trim());
 
-      if (translate.languages.isSupported(langISO))
-      {
          if (!langs.unique.includes(langISO))
          {
             langs.unique.push(langISO);
@@ -104,12 +106,6 @@ module.exports = function(lang, single = false)
                native: ISO6391.getNativeName(langInvertException(langISO))
             });
          }
-      }
-
-      else
-      {
-         langs.invalid.push(language.trim());
-      }
    });
 
    // clean up
