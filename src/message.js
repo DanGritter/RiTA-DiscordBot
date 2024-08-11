@@ -73,13 +73,18 @@ module.exports = function(config, message, edited, deleted)
       message.content.startsWith(config.clearCmd)        
    )
    {
+      if (message.isAdmin) {
         message.channel.bulkDelete(100, true).then((_message) => {
-        message.channel.send(`Bot cleared \`${_message.size}\` messages :broom:`).then((sent) => {
-          setTimeout(function () {
-            sent.delete();
-          }, 2500);
+          message.channel.send(`Bot cleared \`${_message.size}\` messages :broom:`).then((sent) => {
+            setTimeout(function () {
+              sent.delete();
+            }, 2500);
+          });
         });
-      });
+      }
+      else {
+        message.channel.send(`Not allowed to clear messages!`);
+      }
    }
 
    // --------------------------
