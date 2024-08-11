@@ -75,7 +75,7 @@ module.exports = function(config, message, edited, deleted)
    {
       if (message.isAdmin) {
         message.channel.bulkDelete(100, true).then((_message) => {
-          message.reply({content: `Bot cleared \`${_message.size}\` messages :broom:`,ephemeral:true}).then((sent) => {
+          _message.reply({content: `Bot cleared \`${_message.size}\` messages :broom:`,ephemeral:true}).then((sent) => {
             setTimeout(function () {
               sent.delete();
             }, 2500);
