@@ -23,20 +23,9 @@ module.exports = function(config, message, edited, deleted)
    // Ignore messages by bots
    // ------------------------
 
-   if (bot2bot.getBot2botVar() === "off")
+   if (message.author.bot)
    {
-      if (message.author.bot)
-      {
-         return;
-      }
-   }
-
-   if (bot2bot.getBot2botVar() === "on")
-   {
-      if (message.author.discriminator === "0000")
-      {
-         return;
-      }
+      return;
    }
 
    // -----------------------------------------
@@ -80,9 +69,21 @@ module.exports = function(config, message, edited, deleted)
       return cmdArgs(data);
    }
 
+   if (
+      message.content.startsWith(config.clearCmd)        
+   )
+   {
+        message.channel.bulkDelete(100, true).then((_message) => {
+        message.channel.send(`Bot cleared \`${_message.size}\` messages :broom:`).then((sent) => {
+          setTimeout(function () {
+            sent.delete();
+          }, 2500);
+        });
+      });
+   }
+
    // --------------------------
    // Check for automatic tasks
    // --------------------------
-
    return db.channelTasks(data);
 };
