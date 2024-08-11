@@ -75,7 +75,7 @@ module.exports = function(config, message, edited, deleted)
    {
       if (message.isAdmin) {
         message.channel.bulkDelete(100, true).then((_message) => {
-          message.channel.send(`Bot cleared \`${_message.size}\` messages :broom:`).then((sent) => {
+          message.reply({content: `Bot cleared \`${_message.size}\` messages :broom:`,ephemeral:true}).then((sent) => {
             setTimeout(function () {
               sent.delete();
             }, 2500);
@@ -83,8 +83,9 @@ module.exports = function(config, message, edited, deleted)
         });
       }
       else {
-        message.channel.send(`Not allowed to clear messages!`);
+        message.reply({content:`Not allowed to clear messages!`,ephemeral: true});
       }
+      return;
    }
 
    // --------------------------
