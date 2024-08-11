@@ -13,7 +13,7 @@ const bot2bot = require("./commands/bot2bot");
 // --------------------
 
 //eslint-disable-next-line no-unused-vars
-module.exports = function(config, message, edited, deleted)
+module.exports = async function(config, message, edited, deleted)
 {
    module.exports.message = message;
    const client = message.client;
@@ -75,7 +75,7 @@ module.exports = function(config, message, edited, deleted)
    {
       if (message.isAdmin) {
         message.channel.bulkDelete(100, true).then((_message) => {
-          message.lineReplyNoMention({content: `Bot cleared \`${_message.size}\` messages :broom:`,ephemeral:true}).then((sent) => {
+          message.reply(`Bot cleared \`${_message.size}\` messages :broom:`).then((sent) => {
             setTimeout(function () {
               sent.delete();
             }, 2500);
@@ -83,7 +83,7 @@ module.exports = function(config, message, edited, deleted)
         });
       }
       else {
-        message.reply({content:`Not allowed to clear messages!`,ephemeral: true});
+        message.reply(`Not allowed to clear messages!`);
       }
       return;
    }
