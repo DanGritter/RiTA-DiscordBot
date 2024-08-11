@@ -40,6 +40,7 @@
   "dependencies": {
     "@google-cloud/translate": "^8.3.0",
     "common-tags": "^1.8.0",
+    "discord-reply": "^0.1.2",
     "discord.js": "^11.6.4",
     "dotenv": "^8.2.0",
     "google-translate-api": "github:matheuss/google-translate-api",

@@ -5,6 +5,7 @@
 // codebeat:disable[LOC,ABC,BLOCK_NESTING]
 require("dotenv").config();
 const discord = require("discord.js");
+require('discord-reply'); 
 const client = new discord.Client();
 const auth = require("./core/auth");
 
