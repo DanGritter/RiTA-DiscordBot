@@ -6,7 +6,7 @@
 const db = require("./core/db");
 const fn = require("./core/helpers");
 const cmdArgs = require("./commands/args");
-const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle } = require("discord.js");
+const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle, PermissionsBitField, ChannelType } = require("discord.js");
 
 const alliances = ["wlf","TDS", "OGs", "555", "TIR", "CHO", "BYO", "PrO", "LoU", "TAR", "KSM", "WTF", "DIF", "OPG"];
 const languages = ["English", "Russian", "German"];
@@ -38,14 +38,11 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
    // -----------------------------------------
    // Embed member permissions in message data
    // -----------------------------------------
-
-   if (message.channel.type === "text" && message.member)
+   if (message.channel.type === ChannelType.GuildText && message.member)
    {
       message.isAdmin =
-         message.member.permissions.has("ADMINISTRATOR");
-
-      message.isManager =
-         fn.checkPerm(message.member, message.channel, "MANAGE_CHANNELS");
+         message.member.permissionsIn(message.channel).has(PermissionsBitField.Flags.Administrator);
+	   console.log(message.member);
 
       // Add role color
       message.roleColor = fn.getRoleColor(message.member);
@@ -84,7 +81,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       {
          message.channel.bulkDelete(100, true).then((_message) =>
          {
-            message.reply(`Bot cleared \`${_message.size}\` messages :broom:`).then((sent) =>
+            message.reply({content:`Bot cleared \`${_message.size}\` messages :broom:`, ephemeral: true}).then((sent) =>
             {
                setTimeout(function ()
                {
@@ -95,7 +92,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       }
       else
       {
-         message.reply(`Not allowed to clear messages!`);
+         message.reply({content: `Not allowed to clear messages!`,ephemeral: true});
       }
       return;
    }
