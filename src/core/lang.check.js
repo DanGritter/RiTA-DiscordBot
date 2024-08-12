@@ -97,15 +97,15 @@ module.exports = function(lang, single = false)
    {
       const langISO = getLangISO(language.trim());
 
-         if (!langs.unique.includes(langISO))
-         {
-            langs.unique.push(langISO);
-            langs.valid.push({
-               iso: langISO,
-               name: ISO6391.getName(langInvertException(langISO)),
-               native: ISO6391.getNativeName(langInvertException(langISO))
-            });
-         }
+      if (!langs.unique.includes(langISO))
+      {
+         langs.unique.push(langISO);
+         langs.valid.push({
+            iso: langISO,
+            name: ISO6391.getName(langInvertException(langISO)),
+            native: ISO6391.getNativeName(langInvertException(langISO))
+         });
+      }
    });
 
    // clean up

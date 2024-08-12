@@ -4,9 +4,22 @@
 
 // codebeat:disable[LOC,ABC,BLOCK_NESTING]
 require("dotenv").config();
-const discord = require("discord.js");
-require('discord-reply'); 
-const client = new discord.Client();
+
+const { Client, GatewayIntentBits, Partials } = require("discord.js");
+
+const client = new Client({
+   intents: [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.MessageContent,
+      GatewayIntentBits.GuildMembers,
+      GatewayIntentBits.DirectMessages
+   ],
+   partials: [
+      Partials.Channel,
+      Partials.Message
+   ]}
+);
 const auth = require("./core/auth");
 
 // ---------------

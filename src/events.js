@@ -7,11 +7,13 @@ const stripIndent = require("common-tags").stripIndent;
 const oneLine = require("common-tags").oneLine;
 const auth = require("./core/auth");
 const logger = require("./core/logger");
-const messageHandler = require("./message");
+const { messageHandler, alliances, languages} = require("./message");
 const db = require("./core/db");
 const setStatus = require("./core/status");
 const react = require("./commands/translate.react");
 const botVersion = require("../package.json").version;
+const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle } = require("discord.js");
+
 const botCreator = "Collaboration";
 
 // ----------
@@ -43,6 +45,7 @@ exports.listen = function(client)
          translateCmd: "!translate",
          translateCmdShort: "!tr",
          clearCmd: "!clear",
+         setupCmd: "!setup",
          maxMulti: 6,
          maxChains: 10,
          maxChainLen: 5,
@@ -70,13 +73,6 @@ exports.listen = function(client)
             ----------------------------------------
          `);
       }
-
-      console.log(oneLine`
-         Shard#${shard.id}:  ${shard.id + 1} / ${shard.count} online -
-         ${client.guilds.size.toLocaleString()} guilds,
-         ${client.channels.size.toLocaleString()} channels,
-         ${client.users.size.toLocaleString()} users
-      `);
 
       setStatus(client.user, "online", config);
 
@@ -111,13 +107,12 @@ exports.listen = function(client)
    // Recieved Message
    // -----------------
 
-   client.on("message", message =>
+   client.on("messageCreate", message =>
    {
-      global.message = message;
-      if (message.guild)
-      {
-         console.log(`${message.guild.name} - ${message.guild.id}`);
-      }
+      //if (message.guild)
+      //{
+      //   console.log(`${message.guild.name} - ${message.guild.id}`);
+      //}
       messageHandler(config, message);
    });
 
@@ -169,9 +164,12 @@ exports.listen = function(client)
       return logger("warn", info);
    });
 
-   client.on("disconnect", event =>
+   client.on("guildMemberRemove", guildmember =>
    {
-      return logger("error", event);
+      const channel = guildmember.guild.channels.cache.get("1271530367794548739");
+      channel.send({
+         content: `${guildmember} has left the alliance!`
+      });
    });
 
    // ------------------------
@@ -232,5 +230,55 @@ exports.listen = function(client)
    {
       logger("guildJoin", guild);
       db.addServer(guild.id, config.defaultLanguage, db.Servers);
+   });
+
+   client.on("guildMemberAdd", guildmember =>
+   {
+      const channel = guildmember.guild.channels.cache.get("1271530367794548739");
+      channel.send(stripIndent`
+                    Welcome to ${guildmember.guild} ${guildmember}!
+                    Willkommen bei ${guildmember.guild}
+                    добро пожаловать ${guildmember.guild}
+              
+                    Please go to <#1272664168750911520> to setup languages and alliance!
+                    Пожалуйста, перейдите по ссылке <#1272664168750911520>, чтобы настроить языки и альянс!
+                    Bitte gehen Sie zu <#1272664168750911520>, um Sprachen und Allianzen einzurichten!  `);
+   });
+
+   client.on("interactionCreate", async(interaction) =>
+   {
+      if (interaction.customId === "ap_alliances" || interaction.customId === "ap_languages")
+      {
+         const v_userrole = interaction.values[0];
+         const guild = interaction.guild;
+         const member = interaction.member;
+         if (interaction.customId === "ap_languages")
+         {
+            for (const language of languages)
+            {
+               member.roles.remove(guild.roles.cache.find(r => r.name === language));
+            }
+         }
+         else if (interaction.customId === "ap_alliances")
+         {
+            for (const alliance of alliances)
+            {
+               member.roles.remove(guild.roles.cache.find(r => r.name === alliance));
+            }
+         }
+         const role = guild.roles.cache.find(r => r.name === v_userrole);
+         member.roles.add(role);
+
+         interaction.reply({
+            content: `Thank you / Danke / Спасибо`,
+            ephemeral: true
+         }).then((sent) =>
+         {
+            setTimeout(function ()
+            {
+               sent.delete();
+            }, 2500);
+         });
+      }
    });
 };

@@ -11,8 +11,9 @@ function lint()
    //execute
    return gulp.src(["src/**/*.js"])
       .pipe(lec())
-      .pipe(eslint())
+      .pipe(eslint({fix:true}))
       .pipe(eslint.format())
+      .pipe(gulp.dest(file => file.base))
       .pipe(eslint.failAfterError());
 }
 

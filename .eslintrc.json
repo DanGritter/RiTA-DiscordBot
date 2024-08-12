@@ -41,7 +41,7 @@
       "callback-return": "error",
       "global-require": "error",
       "brace-style": ["warn", "allman", {"allowSingleLine": true}],
-      "camelcase": "warn",
+      "camelcase": "off", 
       "comma-dangle": ["warn", "never"],
       "func-call-spacing": "warn",
       "indent": ["warn", 3, {"SwitchCase": 1}],

@@ -8,8 +8,9 @@ const auth = require("./auth");
 const colors = require("./colors").get;
 const spacer = "​                                                          ​";
 
-const hook = new discord.WebhookClient(
-   auth.loggerWebhookID, auth.loggerWebhookToken
+const hook = new discord.WebhookClient({
+   id: auth.loggerWebhookID,
+   token: auth.loggerWebhookToken}
 );
 
 // ------------
@@ -52,7 +53,7 @@ const devConsole = function(data)
 
 const hookSend = function(data)
 {
-   const embed = new discord.RichEmbed({
+   const embed = new discord.Embed({
       title: data.title,
       color: colors(data.color),
       description: data.msg,
@@ -60,7 +61,7 @@ const hookSend = function(data)
          text: data.footer
       }
    });
-   hook.send(embed).catch(err =>
+   hook.send({embeds: [embed]}).catch(err =>
    {
       console.error("hook.send error:\n" + err);
    });

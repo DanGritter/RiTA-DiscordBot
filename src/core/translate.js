@@ -18,7 +18,7 @@ const translate = new Translate({key: auth.gcpapikey});
 
 const translateFix = function(string)
 {
-   console.log("translateFix= "+string)
+   console.log("translateFix= "+string);
    const normal = /(<[@#!$%&*])\s*/gim;
    const nick = /(<[@#!$%&*]!)\s*/gim;
    const role = /(<[@#!$%&*]&)\s*/gim;
@@ -77,8 +77,9 @@ const bufferChains = function(data, from)
    {
       const chainMsgs = chain.msgs.join("\n");
       const to = data.translate.to.valid[0].iso;
-      translate.translate(chainMsgs, 
-	      {to: to, from:
+      translate.translate(chainMsgs,
+         {to: to,
+            from:
          from}).then(res =>
       {
          console.log(res);
@@ -306,7 +307,7 @@ module.exports = function(data) //eslint-disable-line complexity
 
    textArray.forEach(chunk =>
    {
-	   console.log("opts = "+opts);
+      console.log("opts = "+opts);
       translate.translate(chunk, opts).then(res =>
       {
          updateServerStats(data.message);
