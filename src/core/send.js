@@ -101,14 +101,14 @@ module.exports = function(data)
 
    function ignoreMessage()
    {
-      const ignoreMessageEmbed = new discord.RichEmbed()
+      const ignoreMessageEmbed = new discord.Embed()
          .setColor(colors.get(data.color))
          .setTitle("**Bot Alert**\n")
          .setAuthor(data.bot.username, data.bot.icon_url || "https://ritabot.org/index/images/favicon.png")
          .setDescription(data.text)
          .setTimestamp()
          .setFooter("𝗕𝗼𝘁𝗵 𝗺𝗲𝘀𝘀𝗮𝗴𝗲𝘀  𝘄𝗶𝗹𝗹 𝘀𝗲𝗹𝗳-𝗱𝗲𝘀𝘁𝗿𝘂𝗰𝘁 𝗶𝗻 10 𝘀𝗲𝗰𝗼𝗻𝗱𝘀");
-      message.reply(ignoreMessageEmbed).then(msg =>
+      message.reply({embeds: [ignoreMessageEmbed]}).then(msg =>
       {
          msg.delete(10000);
       });
@@ -173,14 +173,14 @@ const embedOn = function(data)
          if (!data.author)
          {
             message.delete(5000);
-            const botEmbedOn = new discord.RichEmbed()
+            const botEmbedOn = new discord.Embed()
                .setColor(colors.get(data.color))
                .setAuthor(data.bot.username, data.bot.icon_url)
                .setDescription(data.text)
                .setTimestamp()
                .setFooter("This message will self-destruct in one minute");
 
-            message.channel.send(botEmbedOn).then(msg =>
+            message.channel.send({embeds: [botEmbedOn]}).then(msg =>
             {
                msg.delete(60000);
             });
@@ -406,14 +406,14 @@ const embedOff = function(data)
          else
          {
             message.delete(5000);
-            const botEmbedOff = new discord.RichEmbed()
+            const botEmbedOff = new discord.Embed()
                .setColor(colors.get(data.color))
                .setAuthor(data.bot.username, data.bot.icon_url)
                .setDescription(data.text)
                .setTimestamp()
                .setFooter("This message will self-destruct in one minute");
 
-            data.channel.send(botEmbedOff).then(msg =>
+            data.channel.send({embeds: [botEmbedOff]}).then(msg =>
             {
                msg.delete(60000);
             });
@@ -462,13 +462,13 @@ const embedOff = function(data)
 
       if (data.channel.type === "dm")
       {
-         const embed = new discord.RichEmbed()
+         const embed = new discord.Embed()
             .setAuthor(message.member.nickname || data.author.name, data.author.displayAvatarURL)
             .setColor(colors.get(data.color))
             .setDescription(data.text)
             .setFooter(data.footer.text);
          sendAttachments(data);
-         data.channel.send({embed});
+         data.channel.send({embeds: [embed]});
       }
 
       else
