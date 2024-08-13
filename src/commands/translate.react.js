@@ -71,17 +71,20 @@ module.exports = function(data, user, client)
             };
 
             // message data
+            fn.getGuildUser(client,data.message.guildID,data.message.authorId, (user,err) =>
+            {
+               data.message.member = user;
+               data.message = message;
+               data.message.roleColor = fn.getRoleColor(data.message.member);
+               data.canWrite = true;
+               data.bot = client.user;
 
-            data.message = message;
-            data.message.roleColor = fn.getRoleColor(data.message.member);
-            data.canWrite = true;
-            data.bot = client.user;
-
-            // ------------------
-            // Start translation
-            // ------------------
-
-            translate(data);
+               // ------------------
+               // Start translation
+               // ------------------
+               console.log(JSON.stringify(data.message.member));
+               translate(data);
+	    });
          }
       );
    }

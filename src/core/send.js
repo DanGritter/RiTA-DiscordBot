@@ -120,16 +120,16 @@ module.exports = function(data)
 
    if (db.setEmbedVar() === "")
    {
-      // eslint-disable-next-line no-unused-expressions
-      db.setEmbedVar;
-      console.log(`db.set Stage 2 = ` + db.setEmbedVar());
-      var output =
-      "**:robot: " + data.bot.username + " has restarted\n\n" +
-      " :gear: Please resend your previous message.**\n\n" +
-      "  :wrench: You may need to define the embed value using `!t embed on/off` if this message is in a loop when sending commands/messages.";
-      data.color = "warn";
-      data.text = output;
-      return ignoreMessage();
+      //      // eslint-disable-next-line no-unused-expressions
+      //      db.setEmbedVar;
+      //      console.log(`db.set Stage 2 = ` + db.setEmbedVar());
+      //      var output =
+      //      "**:robot: " + data.bot.username + " has restarted\n\n" +
+      //      " :gear: Please resend your previous message.**\n\n" +
+      //      "  :wrench: You may need to define the embed value using `!t embed on/off` if this message is in a loop when sending commands/messages.";
+      //      data.color = "warn";
+      //      data.text = output;
+      //      return ignoreMessage();
    }
    else
    // eslint-disable-next-line no-else-return
@@ -190,14 +190,14 @@ const embedOn = function(data)
          else
          {
             data.channel.send({
-               embeds: {
+               embeds: [{
                   title: data.title,
                   fields: data.fields,
                   author: data.author,
                   color: colors.get(data.color),
                   description: data.text,
                   footer: data.footer
-               }
+               }]
             }).then(() =>
             {
                sendEmbeds(data);
@@ -345,44 +345,9 @@ const embedOff = function(data)
    // ---------------------
    // Send Webhook Message
    // ---------------------
-
-   /*  if (message.member)
-   {
-      if (message.member.nickname)
-      {
-         nicknameVar = message.member.nickname;
-      }
-      if (data.text === undefined)
-      {
-         nicknameVar = message.author.username;
-      }
-      if (data.text && message.member.nickname === undefined | null)
-      {
-         nicknameVar = data.author.username;
-      }
-   }
-   if (!message.member)
-   {
-      if (data.emoji)
-      {
-         nicknameVar = data.author.username;
-      }
-   }*/
-   if (data.author)
-   {
-      nicknameVar = data.author.name || data.author.username;
-   }
-
    function sendWebhookMessage(webhook, data)
    {
-      if (data.author)
-      {
-         data.author = {
-            name: data.author.username,
-            // eslint-disable-next-line camelcase
-            icon_url: data.author.displayAvatarURL
-         };
-      }
+      console.log("send.js 350: "+JSON.stringify(data.author));
       if (data.bot)
       {
          data.bot = {
@@ -426,15 +391,17 @@ const embedOff = function(data)
          if (data.author)
          {
             if (data.author.username) { username = data.author.username;}
-            if (data.author.avatarURL) { avatarURL = data.author.avatarURL;}
+            else
+            {
+		    username = data.author.name;
+            }
+            avatarURL = data.author.displayAvatarURL();
          }
-         {
-            webhook.send({content: data.text,
-               username: username,
-               avatarURL: avatarURL,
-               files: files
-            });
-         }
+         webhook.send({content: data.text,
+            username: username,
+            avatarURL: avatarURL,
+            files: files
+         });
       }
    }
 
@@ -585,7 +552,8 @@ const checkPerms = function(data, sendBox)
       // ----------------------------------------------
       // Check if bot can write to destination channel
       // ----------------------------------------------
-      if (err) {
+      if (err)
+      {
          return logger("error",err);
       }
 

@@ -92,7 +92,6 @@ const checkContent = function(msg, output)
 
 const getMainArg = function(output)
 {
-   console.log(JSON.stringify(output));
    const sepIndex = output.main.indexOf(" ");
 
    if (sepIndex > -1)
@@ -100,7 +99,6 @@ const getMainArg = function(output)
       output.params = output.main.slice(sepIndex + 1);
       output.main = output.main.slice(0, sepIndex);
    }
-   console.log(JSON.stringify(output));
 };
 
 // -------------

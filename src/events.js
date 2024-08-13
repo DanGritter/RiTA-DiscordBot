@@ -155,7 +155,8 @@ exports.listen = function(client)
             return;
          }
       }
-      console.log("Message reaction" + message);
+      console.log("Message reaction:" + JSON.stringify(message));
+      console.log("Message user:" + JSON.stringify(user));
       react(message, user,client);
    });
 

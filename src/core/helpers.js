@@ -126,6 +126,42 @@ exports.getRoleColor = function(member)
 // Get user
 // ---------
 
+exports.getGuildUser = function(client, guildID, userID, cb)
+{
+   module.exports.getGuild(client, guildID, (guild,guilderr) =>
+   {
+      if (guilderr)
+      {
+         cb(null,guilderr);
+         return logger("error", guilderr);
+      }
+      const guildmember = guild.members.cache.get(userID);
+      if (guildmember)
+      {
+         return cb(guildmember);
+      }
+
+      guild.members.fetch(userID).then(cb).catch(usererr =>
+      {
+	    return cb(null,usererr);
+	 });
+   }
+   );
+};
+exports.getGuild = function(client, guildID, cb)
+{
+   const guild = client.guilds.cache.get(guildID);
+   if (guild)
+   {
+      return cb(guild);
+   }
+   client.guilds.fetch(guildID).then(cb).catch(err =>
+   {
+      cb(null,err);
+      return logger("error", err);
+   });
+};
+
 exports.getUser = function(client, userID, cb)
 {
    const user = client.users.cache.get(userID);
@@ -139,7 +175,7 @@ exports.getUser = function(client, userID, cb)
 
    client.users.fetch(userID).then(cb).catch(err =>
    {
-      cb(false);
+      cb(null,err);
       return logger("error", err);
    });
 };
