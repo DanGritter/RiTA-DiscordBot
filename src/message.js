@@ -42,7 +42,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
    {
       message.isAdmin =
          message.member.permissionsIn(message.channel).has(PermissionsBitField.Flags.Administrator);
-	   console.log(message.member);
+      console.log(message.member);
 
       // Add role color
       message.roleColor = fn.getRoleColor(message.member);
@@ -81,7 +81,8 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       {
          message.channel.bulkDelete(100, true).then((_message) =>
          {
-            message.reply({content:`Bot cleared \`${_message.size}\` messages :broom:`, ephemeral: true}).then((sent) =>
+            message.reply({content: `Bot cleared \`${_message.size}\` messages :broom:`,
+               ephemeral: true}).then((sent) =>
             {
                setTimeout(function ()
                {
@@ -92,7 +93,8 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       }
       else
       {
-         message.reply({content: `Not allowed to clear messages!`,ephemeral: true});
+         message.reply({content: `Not allowed to clear messages!`,
+            ephemeral: true});
       }
       return;
    }

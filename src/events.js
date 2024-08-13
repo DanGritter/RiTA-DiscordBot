@@ -234,8 +234,10 @@ exports.listen = function(client)
 
    client.on("guildMemberAdd", guildmember =>
    {
-      const channel = guildmember.guild.channels.cache.get("1271530367794548739");
-      channel.send(stripIndent`
+      setTimeout(function ()
+      {
+         const channel = guildmember.guild.channels.cache.get("1271530367794548739");
+         channel.send(stripIndent`
                     Welcome to ${guildmember.guild} ${guildmember}!
                     Willkommen bei ${guildmember.guild}
                     добро пожаловать ${guildmember.guild}
@@ -243,6 +245,7 @@ exports.listen = function(client)
                     Please go to <#1272664168750911520> to setup languages and alliance!
                     Пожалуйста, перейдите по ссылке <#1272664168750911520>, чтобы настроить языки и альянс!
                     Bitte gehen Sie zu <#1272664168750911520>, um Sprachen und Allianzen einzurichten!  `);
+      }, 3000);
    });
 
    client.on("interactionCreate", async(interaction) =>
