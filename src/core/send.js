@@ -580,7 +580,7 @@ const checkPerms = function(data, sendBox)
 
    if (data.forward)
    {
-      const forwardChannel = data.client.channels.get(data.forward);
+      const forwardChannel = data.client.channels.cache.get(data.forward);
 
       if (forwardChannel)
       {
