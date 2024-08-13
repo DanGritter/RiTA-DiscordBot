@@ -11,13 +11,15 @@ const client = new Client({
    intents: [
       GatewayIntentBits.Guilds,
       GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildMessageReactions,
       GatewayIntentBits.MessageContent,
       GatewayIntentBits.GuildMembers,
       GatewayIntentBits.DirectMessages
    ],
    partials: [
       Partials.Channel,
-      Partials.Message
+      Partials.Message,
+      Partials.Reaction
    ]}
 );
 const auth = require("./core/auth");

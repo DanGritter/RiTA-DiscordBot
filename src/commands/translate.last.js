@@ -76,11 +76,11 @@ module.exports = function(data)
       limit = 100;
    }
 
-   data.message.channel.fetchMessages({
+   data.message.channel.messages.fetch({
       limit: limit
    }).then(messages => //eslint-disable-line complexity
    {
-      const messagesArray = messages.array().reverse();
+      const messagesArray = messages.reverse();
       var lastAuthor;
       var chains = [];
 

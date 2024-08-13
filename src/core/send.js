@@ -104,13 +104,14 @@ module.exports = function(data)
       const ignoreMessageEmbed = new discord.EmbedBuilder()
          .setColor(colors.get(data.color))
          .setTitle("**Bot Alert**\n")
-         .setAuthor({name:data.bot.username, iconURL: data.bot.icon_url || "https://ritabot.org/index/images/favicon.png"{)
+         .setAuthor({name: data.bot.username,
+            iconURL: data.bot.icon_url || "https://ritabot.org/index/images/favicon.png"})
          .setDescription(data.text)
          .setTimestamp()
-         .setFooter("𝗕𝗼𝘁𝗵 𝗺𝗲𝘀𝘀𝗮𝗴𝗲𝘀  𝘄𝗶𝗹𝗹 𝘀𝗲𝗹𝗳-𝗱𝗲𝘀𝘁𝗿𝘂𝗰𝘁 𝗶𝗻 10 𝘀𝗲𝗰𝗼𝗻𝗱𝘀");
+         .setFooter({text: "𝗕𝗼𝘁𝗵 𝗺𝗲𝘀𝘀𝗮𝗴𝗲𝘀  𝘄𝗶𝗹𝗹 𝘀𝗲𝗹𝗳-𝗱𝗲𝘀𝘁𝗿𝘂𝗰𝘁 𝗶𝗻 10 𝘀𝗲𝗰𝗼𝗻𝗱𝘀"});
       message.reply({embeds: [ignoreMessageEmbed]}).then(msg =>
       {
-         msg.delete(10000);
+         setTimeout(function() { msg.delete();},10000);
       });
    }
 
@@ -175,20 +176,21 @@ const embedOn = function(data)
             message.delete(5000);
             const botEmbedOn = new discord.EmbedBuilder()
                .setColor(colors.get(data.color))
-               .setAuthor({name: data.bot.username, iconURL: data.bot.icon_url})
+               .setAuthor({name: data.bot.username,
+                  iconURL: data.bot.icon_url})
                .setDescription(data.text)
                .setTimestamp()
-               .setFooter("This message will self-destruct in one minute");
+               .setFooter({text: "This message will self-destruct in one minute"});
 
             message.channel.send({embeds: [botEmbedOn]}).then(msg =>
             {
-               msg.delete(60000);
+               setTimeout(function() {msg.delete();},60000);
             });
          }
          else
          {
             data.channel.send({
-               embed: {
+               embeds: {
                   title: data.title,
                   fields: data.fields,
                   author: data.author,
@@ -325,21 +327,17 @@ const embedOff = function(data)
    // Create Files
    // -------------
 
-   function createFiles(dataAttachments)
+   function createFiles(attachments)
    {
-      if (!dataAttachments && !dataAttachments.array().length > 0) {return;}
-      var attachments = dataAttachments.array();
+      if (!attachments || attachments.length === 0) {return;}
       const files = [];
-      if (attachments && attachments.length > 0)
+      for (let i = 0; i < attachments.length; i++)
       {
-         for (let i = 0; i < attachments.length; i++)
-         {
-            const attachmentObj = new discord.Attachment(
-               attachments[i].url,
-               attachments[i].filename
-            );
-            files.push(attachmentObj);
-         }
+         const attachmentObj = new discord.Attachment(
+            attachments[i].url,
+            attachments[i].filename
+         );
+         files.push(attachmentObj);
       }
       return files;
    }
@@ -374,6 +372,7 @@ const embedOff = function(data)
    {
       nicknameVar = data.author.name || data.author.username;
    }
+
    function sendWebhookMessage(webhook, data)
    {
       if (data.author)
@@ -392,45 +391,48 @@ const embedOff = function(data)
             icon_url: data.bot.displayAvatarURL
          };
       }
-      //      const files = createFiles(data.attachments);
+      const files = createFiles(data.attachments);
       if (!data.author)
       {
          if (data.text === undefined)
          {
-            webhook.send(data.text, {
-               "username": message.author.username,
-               "avatarURL": message.author.displayAvatarURL
-               //              "files": files
+            webhook.send({content: data.text,
+               username: message.author.username,
+               avatarURL: message.author.displayAvatarURL,
+               files: files
             });
          }
          else
          {
-            message.delete(5000);
+            setTimeout(function() {message.delete();},5000);
             const botEmbedOff = new discord.EmbedBuilder()
                .setColor(colors.get(data.color))
-               .setAuthor({name: data.bot.username, iconURL: data.bot.icon_url})
+               .setAuthor({name: data.bot.username,
+                  iconURL: data.bot.displayAvatarURL})
                .setDescription(data.text)
                .setTimestamp()
-               .setFooter("This message will self-destruct in one minute");
+               .setFooter({text: "This message will self-destruct in one minute"});
 
             data.channel.send({embeds: [botEmbedOff]}).then(msg =>
             {
-               msg.delete(60000);
+               setTimeout(function() {msg.delete();},60000);
             });
          }
       }
       else
       {
+         let username = null;
+         let avatarURL = null;
          if (data.author)
          {
-            if (data.author.name) { username = data.author.name;}
-            if (data.author.icon_url) { avatarURL = data.author.icon_url;}
+            if (data.author.username) { username = data.author.username;}
+            if (data.author.avatarURL) { avatarURL = data.author.avatarURL;}
          }
          {
-            webhook.send(data.text, {
-               "username": data.author.name || data.author.username,
-               "avatarURL": data.author.icon_url,
-               "files": files
+            webhook.send({content: data.text,
+               username: username,
+               avatarURL: avatarURL,
+               files: files
             });
          }
       }
@@ -463,14 +465,14 @@ const embedOff = function(data)
       if (data.channel.type === "dm")
       {
          const embed = new discord.Embed()
-            .setAuthor({name: message.member.nickname || data.author.name, iconURL: data.author.displayAvatarURL})
+            .setAuthor({name: message.member.nickname || data.author.name,
+               iconURL: data.author.displayAvatarURL})
             .setColor(colors.get(data.color))
             .setDescription(data.text)
-            .setFooter(data.footer.text);
+            .setFooter({text: data.footer.text});
          sendAttachments(data);
          data.channel.send({embeds: [embed]});
       }
-
       else
       {
          channel.fetchWebhooks()
@@ -481,7 +483,8 @@ const embedOff = function(data)
 
                if (!existingWebhook)
                {
-                  channel.createWebhook(webHookName)
+                  channel.createWebhook({name: message.member.nickname || data.uthor.name,
+                     avatar: avatarURL})
                      .then(newWebhook =>
                      {
                         // Finally send the webhook
@@ -577,71 +580,77 @@ const checkPerms = function(data, sendBox)
          .send(writeErr)
          .catch(err => logger("error", err));
    }
-
-   if (data.forward)
+   function doSend(forwardChannel,err)
    {
-      const forwardChannel = data.client.channels.cache.get(data.forward);
-
-      if (forwardChannel)
-      {
-         // ----------------------------------------------
-         // Check if bot can write to destination channel
-         // ----------------------------------------------
-
-         var canWriteDest = true;
-
-         if (forwardChannel.type === "text")
-         {
-            canWriteDest = fn.checkPerm(
-               forwardChannel.guild.me,
-               forwardChannel,
-               "SEND_MESSAGES"
-            );
-         }
-
-         if (canWriteDest)
-         {
-            sendData.origin = sendData.channel;
-            sendData.channel = forwardChannel;
-         }
-
-         // ----------------------------------
-         // Error if bot cannot write to dest
-         // ----------------------------------
-
-         else
-         {
-            sendData.footer = null;
-            sendData.embeds = null;
-            sendData.color = "error";
-            sendData.text =
-                  ":no_entry:  Bot does not have permission to write at the " +
-                  `<#${forwardChannel.id}> channel.`;
-
-            // -------------
-            // Send message
-            // -------------
-
-            return sendBox(sendData);
-         }
+      // ----------------------------------------------
+      // Check if bot can write to destination channel
+      // ----------------------------------------------
+      if (err) {
+         return logger("error",err);
       }
 
-      // ---------------------------------
-      // Error on invalid forward channel
-      // ---------------------------------
+      var canWriteDest = true;
+      if (forwardChannel.type === "text")
+      {
+         canWriteDest = fn.checkPerm(
+            forwardChannel.guild.me,
+            forwardChannel,
+            "SEND_MESSAGES"
+         );
+      }
+
+      if (canWriteDest)
+      {
+         sendData.origin = sendData.channel;
+         sendData.channel = forwardChannel;
+      }
+
+      // ----------------------------------
+      // Error if bot cannot write to dest
+      // ----------------------------------
 
       else
       {
          sendData.footer = null;
          sendData.embeds = null;
          sendData.color = "error";
-         sendData.text = ":warning:  Invalid channel.";
+         sendData.text =
+                  ":no_entry:  Bot does not have permission to write at the " +
+                  `<#${forwardChannel.id}> channel.`;
 
          // -------------
          // Send message
          // -------------
 
          return sendBox(sendData);
+      }
+   }
+   function sendErr(err)
+   {
+      logger("error",err);
+      sendData.footer = null;
+      sendData.embeds = null;
+      sendData.color = "error";
+      sendData.text = ":warning:  Invalid channel.";
+
+      // -------------
+      // Send message
+      // -------------
+
+      return sendBox(sendData);
+   }
+
+   if (data.forward)
+   {
+      const forwardChannel = data.client.channels.cache.get(data.forward);
+
+      if (forwardChannel === undefined)
+      {
+         data.client.channels.fetch(data.forward).then(channel => doSend(channel)).catch(error => sendErr(error));
+      }
+      else
+      {
+         doSend(forwardChannel);
       }
    }
 

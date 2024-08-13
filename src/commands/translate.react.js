@@ -13,14 +13,13 @@ const countryLangs = require("../core/country.langs");
 // Translate a message through discord reaction (flag)
 // ----------------------------------------------------
 
-module.exports = function(data, client)
+module.exports = function(data, user, client)
 {
    // ---------------------
    // Get country by emoji
    // ---------------------
 
    const emoji = data.emoji.name;
-
    if (Object.prototype.hasOwnProperty.call(emoji && countryLangs,emoji))
    {
       // ------------------------------------------------
@@ -35,12 +34,11 @@ module.exports = function(data, client)
       // -----------------
       // Get message data
       // -----------------
-
       fn.getMessage(
          client,
-         data.message_id,
-         data.channel_id,
-         data.user_id,
+         data.message.id,
+         data.message.channel.id,
+         user,
          (message, err) =>
          {
             if (err)
@@ -55,11 +53,10 @@ module.exports = function(data, client)
                return;
             }
 
-            const flagExists = message.reactions.get(emoji);
-
+            const flagExists = message.reactions.cache.get(emoji);
             // prevent flag spam
 
-            if (flagExists)
+            if (flagExists.count > 1)
             {
                return;
             }
@@ -78,6 +75,7 @@ module.exports = function(data, client)
             data.message = message;
             data.message.roleColor = fn.getRoleColor(data.message.member);
             data.canWrite = true;
+            data.bot = client.user;
 
             // ------------------
             // Start translation

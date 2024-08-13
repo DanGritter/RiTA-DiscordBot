@@ -128,7 +128,7 @@ exports.getRoleColor = function(member)
 
 exports.getUser = function(client, userID, cb)
 {
-   const user = client.users.get(userID);
+   const user = client.users.cache.get(userID);
 
    if (user)
    {
@@ -137,7 +137,7 @@ exports.getUser = function(client, userID, cb)
 
    // user not in cache, fetch 'em
 
-   client.fetchUser(userID).then(cb).catch(err =>
+   client.users.fetch(userID).then(cb).catch(err =>
    {
       cb(false);
       return logger("error", err);
@@ -150,26 +150,17 @@ exports.getUser = function(client, userID, cb)
 
 exports.getChannel = function(client, channelID, userID, cb)
 {
-   const channel = client.channels.get(channelID);
-
+   const channel = client.channels.cache.get(channelID);
    if (channel)
    {
       return cb(channel);
    }
 
    // not in cache, create DM
-
-   if (userID)
+   client.channels.fetch(channelID).then(cb).catch(err =>
    {
-      module.exports.getUser(client, userID, user =>
-      {
-         user.createDM().then(cb).catch(err =>
-         {
-            cb(false);
-            return logger("error", err);
-         });
-      });
-   }
+      cb(null,err);
+   });
 };
 
 // ------------
@@ -178,18 +169,21 @@ exports.getChannel = function(client, channelID, userID, cb)
 
 exports.getMessage = function(client, messageID, channelID, userID, cb)
 {
-   module.exports.getChannel(client, channelID, userID, channel =>
+   module.exports.getChannel(client, channelID, userID, async(channel,err) =>
    {
-      const message = channel.messages.get(messageID);
+      if (err)
+      {
+         return logger("error", err);
+      }
+      const message = channel.messages.cache.get(messageID);
 
       if (message)
       {
          return cb(message);
       }
-
       // message not in channel cache
 
-      channel.fetchMessage(messageID).then(cb).catch(err =>
+      channel.messages.fetch(messageID).then(cb).catch(err =>
       {
          return cb(null, err);
       });

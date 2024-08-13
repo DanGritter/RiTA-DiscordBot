@@ -49,12 +49,14 @@ module.exports.run = function(data)
 
       sendMessage(data);
    }
+   else
+   {
+      // ----------------
+      // Execute setting
+      // ----------------
 
-   // ----------------
-   // Execute setting
-   // ----------------
-
-   embedSettings(data);
+      embedSettings(data);
+   }
 };
 
 // -------------------------------
@@ -67,7 +69,6 @@ const embedSettings = function(data)
 
    if (commandVariable1 === "on" || commandVariable1 === "off")
    {
-      console.log(commandVariable1);
       return db.updateEmbedVar(
          data.message.channel.guild.id,
          commandVariable1,
@@ -110,16 +111,18 @@ const embedSettings = function(data)
 
 function sendMessage (data)
 {
-   message.delete(5000);
-   const richEmbedMessage = new discord.RichEmbed()
+   setTimeout(function() {message.delete();},60000);
+   const richEmbedMessage = new discord.EmbedBuilder()
       .setColor(colors.get(data.color))
-      .setAuthor(data.bot.username, data.bot.displayAvatarURL)
+   //      .setAuthor({name: data.bot.username, iconURL: data.bot.displayAvatarURL || "https://cdn.discordapp.com/avatars/961283024572514334/0a43482a41ebea0eeaa48745aa0c9bc0.webp"})
+      .setAuthor({name: "ROOSTER",
+         iconURL: "https://cdn.discordapp.com/avatars/961283024572514334/0a43482a41ebea0eeaa48745aa0c9bc0.webp"})
       .setDescription(data.text)
       .setTimestamp()
-      .setFooter("This message will self-destruct in one minute");
+      .setFooter({text: "This message will self-destruct in one minute"});
 
-   return message.channel.send(richEmbedMessage).then(msg =>
+   return message.channel.send({embeds: [richEmbedMessage]}).then(msg =>
    {
-      msg.delete(60000);
+      setTimeout(function() { msg.delete();},60000);
    });
 }

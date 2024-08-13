@@ -12,7 +12,7 @@ const db = require("./core/db");
 const setStatus = require("./core/status");
 const react = require("./commands/translate.react");
 const botVersion = require("../package.json").version;
-const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle } = require("discord.js");
+const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle, Events } = require("discord.js");
 
 const botCreator = "Collaboration";
 
@@ -113,6 +113,7 @@ exports.listen = function(client)
       //{
       //   console.log(`${message.guild.name} - ${message.guild.id}`);
       //}
+      global.message = message;
       messageHandler(config, message);
    });
 
@@ -138,16 +139,24 @@ exports.listen = function(client)
    // Raw events
    // -----------
 
-   client.on("raw", raw =>
+   client.on(Events.MessageReactionAdd, async (message,user) =>
    {
-      // ---------------------
-      // Listen for reactions
-      // ---------------------
-
-      if (raw.t === "MESSAGE_REACTION_ADD")
+      if (message.partial)
       {
-         react(raw.d, client);
+         // If the message this reaction belongs to was removed, the fetching might result in an API error which should be handled
+         try
+         {
+            await message.fetch();
+         }
+         catch (error)
+         {
+            console.error("Something went wrong when fetching the message:", error);
+            // Return as `reaction.message.author` may be undefined/null
+            return;
+         }
       }
+      console.log("Message reaction" + message);
+      react(message, user,client);
    });
 
    // ---------------------------
