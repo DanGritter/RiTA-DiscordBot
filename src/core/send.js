@@ -104,7 +104,7 @@ module.exports = function(data)
       const ignoreMessageEmbed = new discord.EmbedBuilder()
          .setColor(colors.get(data.color))
          .setTitle("**Bot Alert**\n")
-         .setAuthor(data.bot.username, data.bot.icon_url || "https://ritabot.org/index/images/favicon.png")
+         .setAuthor({name:data.bot.username, iconURL: data.bot.icon_url || "https://ritabot.org/index/images/favicon.png"{)
          .setDescription(data.text)
          .setTimestamp()
          .setFooter("𝗕𝗼𝘁𝗵 𝗺𝗲𝘀𝘀𝗮𝗴𝗲𝘀  𝘄𝗶𝗹𝗹 𝘀𝗲𝗹𝗳-𝗱𝗲𝘀𝘁𝗿𝘂𝗰𝘁 𝗶𝗻 10 𝘀𝗲𝗰𝗼𝗻𝗱𝘀");
@@ -175,7 +175,7 @@ const embedOn = function(data)
             message.delete(5000);
             const botEmbedOn = new discord.EmbedBuilder()
                .setColor(colors.get(data.color))
-               .setAuthor(data.bot.username, data.bot.icon_url)
+               .setAuthor({name: data.bot.username, iconURL: data.bot.icon_url})
                .setDescription(data.text)
                .setTimestamp()
                .setFooter("This message will self-destruct in one minute");
@@ -408,7 +408,7 @@ const embedOff = function(data)
             message.delete(5000);
             const botEmbedOff = new discord.EmbedBuilder()
                .setColor(colors.get(data.color))
-               .setAuthor(data.bot.username, data.bot.icon_url)
+               .setAuthor({name: data.bot.username, iconURL: data.bot.icon_url})
                .setDescription(data.text)
                .setTimestamp()
                .setFooter("This message will self-destruct in one minute");
@@ -463,7 +463,7 @@ const embedOff = function(data)
       if (data.channel.type === "dm")
       {
          const embed = new discord.Embed()
-            .setAuthor(message.member.nickname || data.author.name, data.author.displayAvatarURL)
+            .setAuthor({name: message.member.nickname || data.author.name, iconURL: data.author.displayAvatarURL})
             .setColor(colors.get(data.color))
             .setDescription(data.text)
             .setFooter(data.footer.text);
