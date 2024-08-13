@@ -101,8 +101,8 @@ module.exports = function(data)
 
    function ignoreMessage()
    {
-      const ignoreMessageEmbed = new discord.Embed()
-//         .setColor(colors.get(data.color))
+      const ignoreMessageEmbed = new discord.EmbedBuilder()
+         .setColor(colors.get(data.color))
          .setTitle("**Bot Alert**\n")
          .setAuthor(data.bot.username, data.bot.icon_url || "https://ritabot.org/index/images/favicon.png")
          .setDescription(data.text)
@@ -173,7 +173,7 @@ const embedOn = function(data)
          if (!data.author)
          {
             message.delete(5000);
-            const botEmbedOn = new discord.Embed()
+            const botEmbedOn = new discord.EmbedBuilder()
                .setColor(colors.get(data.color))
                .setAuthor(data.bot.username, data.bot.icon_url)
                .setDescription(data.text)
@@ -392,21 +392,21 @@ const embedOff = function(data)
             icon_url: data.bot.displayAvatarURL
          };
       }
-//      const files = createFiles(data.attachments);
+      //      const files = createFiles(data.attachments);
       if (!data.author)
       {
          if (data.text === undefined)
          {
             webhook.send(data.text, {
                "username": message.author.username,
-               "avatarURL": message.author.displayAvatarURL,
- //              "files": files
+               "avatarURL": message.author.displayAvatarURL
+               //              "files": files
             });
          }
          else
          {
             message.delete(5000);
-            const botEmbedOff = new discord.Embed()
+            const botEmbedOff = new discord.EmbedBuilder()
                .setColor(colors.get(data.color))
                .setAuthor(data.bot.username, data.bot.icon_url)
                .setDescription(data.text)
