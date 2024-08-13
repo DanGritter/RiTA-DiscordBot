@@ -102,7 +102,7 @@ module.exports = function(data)
    function ignoreMessage()
    {
       const ignoreMessageEmbed = new discord.Embed()
-         .setColor(colors.get(data.color))
+//         .setColor(colors.get(data.color))
          .setTitle("**Bot Alert**\n")
          .setAuthor(data.bot.username, data.bot.icon_url || "https://ritabot.org/index/images/favicon.png")
          .setDescription(data.text)
@@ -392,7 +392,7 @@ const embedOff = function(data)
             icon_url: data.bot.displayAvatarURL
          };
       }
-      const files = createFiles(data.attachments);
+//      const files = createFiles(data.attachments);
       if (!data.author)
       {
          if (data.text === undefined)
@@ -400,7 +400,7 @@ const embedOff = function(data)
             webhook.send(data.text, {
                "username": message.author.username,
                "avatarURL": message.author.displayAvatarURL,
-               "files": files
+ //              "files": files
             });
          }
          else
