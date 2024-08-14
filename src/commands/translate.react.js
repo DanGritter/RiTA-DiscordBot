@@ -71,13 +71,16 @@ module.exports = function(data, user, client)
             {
                return logger("error",err);
             }
-            if (message.member) {
-              console.log("setting member");
-              data.author = message.member;
-	    } else {
-              console.log("setting author");
-              data.author = message.author;
-	    }
+            if (message.member)
+            {
+               console.log("setting member");
+               data.author = message.member;
+            }
+            else
+            {
+               console.log("setting author");
+               data.author = message.author;
+            }
             console.log(JSON.stringify(data.author));
             data.message = message;
             data.message.roleColor = fn.getRoleColor(message.member);

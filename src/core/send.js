@@ -385,7 +385,7 @@ const embedOff = function(data)
             }
             else
             {
-               username = data.author.user.username;
+               username = data.author.user.globalName;
             }
             avatarURL = data.author.displayAvatarURL();
          }
