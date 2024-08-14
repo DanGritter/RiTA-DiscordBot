@@ -34,6 +34,7 @@ const translateFix = function(string)
 
 function getUserColor(data, callback)
 {
+   console.log("37 user: "+data.author+ " color:"+data.author.displayHexColor);
    const fw = data.forward;
    const txt = data.text;
    const ft = data.footer;
@@ -261,7 +262,7 @@ module.exports = function(data) //eslint-disable-line complexity
             if (this.count === this.len)
             {
                data.text = this.text;
-               data.color = data.message.roleColor;
+               data.color = data.author.displayHexColor;
                data.showAuthor = true;
                getUserColor(data, botSend);
             }
@@ -305,13 +306,12 @@ module.exports = function(data) //eslint-disable-line complexity
 
    textArray.forEach(chunk =>
    {
-      console.log("opts = "+opts);
       translate.translate(chunk, opts).then(res =>
       {
          updateServerStats(data.message);
          data.forward = fw;
          data.footer = ft;
-         data.color = data.message.roleColor;
+         data.color = data.author.displayHexColor;
          data.text = translateFix(res[1].data.translations[0].translatedText);
          data.showAuthor = true;
          return getUserColor(data, botSend);

@@ -105,7 +105,7 @@ module.exports = function(data)
          .setColor(colors.get(data.color))
          .setTitle("**Bot Alert**\n")
          .setAuthor({name: data.bot.username,
-            iconURL: data.bot.icon_url || "https://ritabot.org/index/images/favicon.png"})
+            iconURL: data.bot.displayAvatarURL()})
          .setDescription(data.text)
          .setTimestamp()
          .setFooter({text: "𝗕𝗼𝘁𝗵 𝗺𝗲𝘀𝘀𝗮𝗴𝗲𝘀  𝘄𝗶𝗹𝗹 𝘀𝗲𝗹𝗳-𝗱𝗲𝘀𝘁𝗿𝘂𝗰𝘁 𝗶𝗻 10 𝘀𝗲𝗰𝗼𝗻𝗱𝘀"});
@@ -177,7 +177,7 @@ const embedOn = function(data)
             const botEmbedOn = new discord.EmbedBuilder()
                .setColor(colors.get(data.color))
                .setAuthor({name: data.bot.username,
-                  iconURL: data.bot.icon_url})
+                  iconURL: data.bot.displayAvatarURL()})
                .setDescription(data.text)
                .setTimestamp()
                .setFooter({text: "This message will self-destruct in one minute"});
@@ -302,7 +302,8 @@ const embedOn = function(data)
             });
             attachments = attachments.slice(0, maxAtt);
          }
-         attachments.every(attachment => {
+         attachments.every(attachment =>
+         {
             const attachmentObj = new discord.AttachmentBuilder().setFile(attachment.url).setName(attachment.name);
             data.channel.send(attachmentObj);
          });
@@ -324,12 +325,13 @@ const embedOff = function(data)
 
    function createFiles(attachments)
    {
-      if (!attachments || attachments.size === 0) {
-         console.log("333 No attachments");
+      if (!attachments || attachments.size === 0)
+      {
          return;
       }
       const files = [];
-      attachments.every( attachment => {
+      attachments.every(attachment =>
+      {
          const attachmentObj = new discord.AttachmentBuilder()
 		      .setFile(attachment.url)
 		      .setName(attachment.name);
@@ -348,9 +350,9 @@ const embedOff = function(data)
       {
          if (data.text === undefined)
          {
-            webhook.send({content: "",           
+            webhook.send({content: "",
                username: message.author.username,
-               avatarURL: message.author.displayAvatarURL,
+               avatarURL: message.author.displayAvatarURL(),
                files: files
             });
          }
@@ -359,7 +361,7 @@ const embedOff = function(data)
             const botEmbedOff = new discord.EmbedBuilder()
                .setColor(colors.get(data.color))
                .setAuthor({name: data.bot.username,
-                  iconURL: data.bot.displayAvatarURL})
+                  iconURL: data.bot.displayAvatarURL()})
                .setDescription(data.text)
                .setTimestamp()
                .setFooter({text: "This message will self-destruct in one minute"});
@@ -383,7 +385,6 @@ const embedOff = function(data)
             }
             avatarURL = data.author.displayAvatarURL();
          }
-         if (files) console.log("402 files: " + JSON.stringify(files));
          webhook.send({content: data.text,
             username: username,
             avatarURL: avatarURL,
@@ -398,10 +399,7 @@ const embedOff = function(data)
 
    const sendBox = function(data)
    {
-      console.log(JSON.stringify(data));
       const channel = data.channel;
-
-
       let color = colors.get(data.color);
       let avatarURL;
       if (data.author && data.author.icon_url)
@@ -421,7 +419,7 @@ const embedOff = function(data)
       {
          const embed = new discord.Embed()
             .setAuthor({name: message.member.nickname || data.author.name,
-               iconURL: data.author.displayAvatarURL})
+               iconURL: data.author.displayAvatarURL()})
             .setColor(colors.get(data.color))
             .setDescription(data.text)
             .setFooter({text: data.footer.text});
@@ -476,7 +474,8 @@ const embedOff = function(data)
             attachments = attachments.slice(0, maxAtt);
          }
 
-         attachments.every(attachment => {
+         attachments.every(attachment =>
+         {
             const attachmentObj = new discord.AttachmentBuilder()
 		 .setFile(attachment.url)
 		 .setName(attachment.name);
@@ -599,7 +598,6 @@ const checkPerms = function(data, sendBox)
 
       if (forwardChannel === undefined)
       {
-	 console.log("617 forward: "+ data.forward);
          data.client.channels.fetch(data.forward).then(channel => doSend(channel)).catch(error => sendErr(error));
       }
       else

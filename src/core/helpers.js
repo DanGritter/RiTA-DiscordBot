@@ -115,33 +115,32 @@ exports.arraySum = function(array)
 
 exports.getRoleColor = function(member)
 {
-   if (member && member.highestRole && member.highestRole.color)
-   {
-      return member.highestRole.color;
-   }
-   return null;
+   console.log("helpers.js 118 member: "+JSON.stringify(member));
+   return member.displayColor;
 };
 
 // ---------
 // Get user
 // ---------
 
-exports.getGuildUser = function(client, guildID, userID, cb)
+exports.getGuildMember = function(client, guildId, userId, cb)
 {
-   module.exports.getGuild(client, guildID, (guild,guilderr) =>
+   console.log("helpers.js 128 guildID,userID: "+guildId + " "+userId);
+   module.exports.getGuild(client, guildId, (guild,guilderr) =>
    {
       if (guilderr)
       {
          cb(null,guilderr);
          return logger("error", guilderr);
       }
-      const guildmember = guild.members.cache.get(userID);
+      const guildmember = guild.members.cache.get(userId);
       if (guildmember)
       {
          return cb(guildmember);
       }
 
-      guild.members.fetch(userID).then(cb).catch(usererr =>
+      guild.members.fetch({user: [userId],
+         withPresences: true}).then(cb).catch(usererr =>
       {
 	    return cb(null,usererr);
 	 });

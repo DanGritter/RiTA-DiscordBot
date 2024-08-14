@@ -69,9 +69,9 @@ module.exports = function(data, user, client)
                from: langCheck("auto"),
                multi: true
             };
-
+            console.log("72 message: "+JSON.stringify(message));
             // message data
-            fn.getGuildUser(client,data.message.guildID,data.message.authorId, (user,err) =>
+            fn.getGuildMember(client,message.guildId, message.authorId, (user,err) =>
             {
                data.message.member = user;
                data.message = message;
