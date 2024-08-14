@@ -175,6 +175,7 @@ const sendTranslation = function(data)
 {
    if (data.proccess)
    {
+      data.author = data.message.member;
       if (
          data.message.content === "" &&
          data.message.attachments.size > 0

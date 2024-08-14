@@ -43,7 +43,7 @@ exports.listen = function(client)
          owner: auth.botOwner,
          defaultLanguage: "en",
          translateCmd: "!translate",
-         translateCmdShort: "!tr",
+         translateCmdShort: "!t",
          clearCmd: "!clear",
          setupCmd: "!setup",
          maxMulti: 6,
@@ -155,8 +155,6 @@ exports.listen = function(client)
             return;
          }
       }
-      console.log("Message reaction:" + JSON.stringify(message));
-      console.log("Message user:" + JSON.stringify(user));
       react(message, user,client);
    });
 
@@ -178,7 +176,7 @@ exports.listen = function(client)
    {
       const channel = guildmember.guild.channels.cache.get("1271530367794548739");
       channel.send({
-         content: `${guildmember} has left the alliance!`
+         content: `${guildmember} has left the server!`
       });
    });
 

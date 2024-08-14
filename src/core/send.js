@@ -333,8 +333,8 @@ const embedOff = function(data)
       attachments.every(attachment =>
       {
          const attachmentObj = new discord.AttachmentBuilder()
-		      .setFile(attachment.url)
-		      .setName(attachment.name);
+            .setFile(attachment.url)
+            .setName(attachment.name);
          files.push(attachmentObj);
       });
       return files;
@@ -351,8 +351,9 @@ const embedOff = function(data)
          if (data.text === undefined)
          {
             webhook.send({content: "",
-               username: message.author.username,
-               avatarURL: message.author.displayAvatarURL(),
+               color: colors.get(data.color),
+               username: data.bot.username,
+               avatarURL: data.bot.displayAvatarURL(),
                files: files
             });
          }
@@ -378,14 +379,19 @@ const embedOff = function(data)
          let avatarURL = null;
          if (data.author)
          {
-            if (data.author.username) { username = data.author.username;}
+            if (data.author.nickname)
+            {
+               username = data.author.nickname;
+            }
             else
             {
-		    username = data.author.name;
+               username = data.author.user.username;
             }
             avatarURL = data.author.displayAvatarURL();
          }
+         console.log(`username: ${username}, color: ${data.color}`);
          webhook.send({content: data.text,
+            color: colors.get(data.color),
             username: username,
             avatarURL: avatarURL,
             files: files
@@ -402,9 +408,9 @@ const embedOff = function(data)
       const channel = data.channel;
       let color = colors.get(data.color);
       let avatarURL;
-      if (data.author && data.author.icon_url)
+      if (data.author && data.author.displayAvatarURL())
       {
-         avatarURL = data.author.displayAvatarURL;
+         avatarURL = data.author.displayAvatarURL();
       }
       if (!channel) {return console.log("Channel not specified.");}
       // Sets the color of embed message but no embed message used so thus unused.
@@ -418,7 +424,7 @@ const embedOff = function(data)
       if (data.channel.type === "dm")
       {
          const embed = new discord.Embed()
-            .setAuthor({name: message.member.nickname || data.author.name,
+            .setAuthor({name: message.member.username || data.author.name,
                iconURL: data.author.displayAvatarURL()})
             .setColor(colors.get(data.color))
             .setDescription(data.text)
@@ -436,7 +442,7 @@ const embedOff = function(data)
 
                if (!existingWebhook)
                {
-                  channel.createWebhook({name: message.member.nickname || data.uthor.name,
+                  channel.createWebhook({name: webHookName,
                      avatar: avatarURL})
                      .then(newWebhook =>
                      {
@@ -477,8 +483,8 @@ const embedOff = function(data)
          attachments.every(attachment =>
          {
             const attachmentObj = new discord.AttachmentBuilder()
-		 .setFile(attachment.url)
-		 .setName(attachment.name);
+               .setFile(attachment.url)
+               .setName(attachment.name);
             data.channel.send({files: [attachmentObj]});
          });
       }
@@ -619,6 +625,5 @@ const checkPerms = function(data, sendBox)
    // -------------
    // Send message
    // -------------
-
    return sendBox(sendData);
 };

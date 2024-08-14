@@ -143,7 +143,6 @@ const logLeave = function(guild)
       title: "Left Guild",
       msg:
          `:regional_indicator_x:  **${guild.name}**\n` +
-         "```md\n> " + guild.id + "\n@" + guild.owner.user.username + "#" +
-         guild.owner.user.discriminator + "\n```" + spacer + spacer
+         "```md\n> " + guild.id + "\n@<" + guild.ownerId + ">\n```" + spacer + spacer
    });
 };

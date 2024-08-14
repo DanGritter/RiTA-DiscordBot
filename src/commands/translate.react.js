@@ -60,31 +60,34 @@ module.exports = function(data, user, client)
             {
                return;
             }
-
             // translate data
-
             data.translate = {
                original: message.content,
                to: langCheck(countryLangs[emoji].langs),
                from: langCheck("auto"),
                multi: true
             };
-            console.log("72 message: "+JSON.stringify(message));
-            // message data
-            fn.getGuildMember(client,message.guildId, message.authorId, (user,err) =>
+            if (err)
             {
-               data.message.member = user;
-               data.message = message;
-               data.message.roleColor = fn.getRoleColor(data.message.member);
-               data.canWrite = true;
-               data.bot = client.user;
+               return logger("error",err);
+            }
+            if (message.member) {
+              console.log("setting member");
+              data.author = message.member;
+	    } else {
+              console.log("setting author");
+              data.author = message.author;
+	    }
+            console.log(JSON.stringify(data.author));
+            data.message = message;
+            data.message.roleColor = fn.getRoleColor(message.member);
+            data.canWrite = true;
+            data.bot = client.user;
 
-               // ------------------
-               // Start translation
-               // ------------------
-               console.log(JSON.stringify(data.message.member));
-               translate(data);
-	    });
+            // ------------------
+            // Start translation
+            // ------------------
+            translate(data);
          }
       );
    }

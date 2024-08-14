@@ -34,7 +34,6 @@ const translateFix = function(string)
 
 function getUserColor(data, callback)
 {
-   console.log("37 user: "+data.author+ " color:"+data.author.displayHexColor);
    const fw = data.forward;
    const txt = data.text;
    const ft = data.footer;
@@ -138,11 +137,6 @@ const updateServerStats = function(message)
 
 module.exports = function(data) //eslint-disable-line complexity
 {
-   // -------------------
-   // Get message author
-   // -------------------
-   data.author = data.message.member.user;
-
    // -------------------------
    // Report invalid languages
    // -------------------------
