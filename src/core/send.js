@@ -246,7 +246,7 @@ const embedOn = function(data)
             });
          }
       }
-      else if (data.attachments.array().length > 0)
+      else if (data.attachments.size > 0)
       {
          sendAttachments(data);
       }
@@ -287,13 +287,13 @@ const embedOn = function(data)
 
    const sendAttachments = function(data)
    {
-      var attachments = data.attachments.array();
+      var attachments = data.attachments;
 
-      if (data.forward && attachments && attachments.length > 0)
+      if (data.forward && attachments && attachments.size > 0)
       {
          const maxAtt = data.config.maxEmbeds;
 
-         if (attachments.length > maxAtt)
+         if (attachments.size > maxAtt)
          {
             sendBox({
                channel: data.channel,
@@ -302,15 +302,10 @@ const embedOn = function(data)
             });
             attachments = attachments.slice(0, maxAtt);
          }
-
-         for (let i = 0; i < attachments.length; i++)
-         {
-            const attachmentObj = new discord.Attachment(
-               attachments[i].url,
-               attachments[i].filename
-            );
+         attachments.every(attachment => {
+            const attachmentObj = new discord.AttachmentBuilder().setFile(attachment.url).setName(attachment.name);
             data.channel.send(attachmentObj);
-         }
+         });
       }
    };
 
@@ -329,16 +324,17 @@ const embedOff = function(data)
 
    function createFiles(attachments)
    {
-      if (!attachments || attachments.length === 0) {return;}
-      const files = [];
-      for (let i = 0; i < attachments.length; i++)
-      {
-         const attachmentObj = new discord.Attachment(
-            attachments[i].url,
-            attachments[i].filename
-         );
-         files.push(attachmentObj);
+      if (!attachments || attachments.size === 0) {
+         console.log("333 No attachments");
+         return;
       }
+      const files = [];
+      attachments.every( attachment => {
+         const attachmentObj = new discord.AttachmentBuilder()
+		      .setFile(attachment.url)
+		      .setName(attachment.name);
+         files.push(attachmentObj);
+      });
       return files;
    }
 
@@ -347,21 +343,12 @@ const embedOff = function(data)
    // ---------------------
    function sendWebhookMessage(webhook, data)
    {
-      console.log("send.js 350: "+JSON.stringify(data.author));
-      if (data.bot)
-      {
-         data.bot = {
-            username: data.bot.username,
-            // eslint-disable-next-line camelcase
-            icon_url: data.bot.displayAvatarURL
-         };
-      }
       const files = createFiles(data.attachments);
       if (!data.author)
       {
          if (data.text === undefined)
          {
-            webhook.send({content: data.text,
+            webhook.send({content: "",           
                username: message.author.username,
                avatarURL: message.author.displayAvatarURL,
                files: files
@@ -369,7 +356,6 @@ const embedOff = function(data)
          }
          else
          {
-            setTimeout(function() {message.delete();},5000);
             const botEmbedOff = new discord.EmbedBuilder()
                .setColor(colors.get(data.color))
                .setAuthor({name: data.bot.username,
@@ -397,6 +383,7 @@ const embedOff = function(data)
             }
             avatarURL = data.author.displayAvatarURL();
          }
+         if (files) console.log("402 files: " + JSON.stringify(files));
          webhook.send({content: data.text,
             username: username,
             avatarURL: avatarURL,
@@ -411,6 +398,7 @@ const embedOff = function(data)
 
    const sendBox = function(data)
    {
+      console.log(JSON.stringify(data));
       const channel = data.channel;
 
 
@@ -472,14 +460,13 @@ const embedOff = function(data)
 
    const sendAttachments = function(data)
    {
-      if (!data.attachments && !data.attachments.array().length > 0) {return;}
-      var attachments = data.attachments.array();
+      var attachments = data.attachments;
 
-      if (data.forward && attachments && attachments.length > 0)
+      if (data.forward && attachments && attachments.size > 0)
       {
          const maxAtt = data.config.maxEmbeds;
 
-         if (attachments.length > maxAtt)
+         if (attachments.size > maxAtt)
          {
             sendBox({
                channel: data.channel,
@@ -489,14 +476,12 @@ const embedOff = function(data)
             attachments = attachments.slice(0, maxAtt);
          }
 
-         for (let i = 0; i < attachments.length; i++)
-         {
-            const attachmentObj = new discord.Attachment(
-               attachments[i].url,
-               attachments[i].filename
-            );
-            data.channel.send(attachmentObj);
-         }
+         attachments.every(attachment => {
+            const attachmentObj = new discord.AttachmentBuilder()
+		 .setFile(attachment.url)
+		 .setName(attachment.name);
+            data.channel.send({files: [attachmentObj]});
+         });
       }
    };
 
@@ -596,7 +581,7 @@ const checkPerms = function(data, sendBox)
    function sendErr(err)
    {
       logger("error",err);
-      sendData.footer = null;
+      sendData.footer = {text: err};
       sendData.embeds = null;
       sendData.color = "error";
       sendData.text = ":warning:  Invalid channel.";
@@ -614,6 +599,7 @@ const checkPerms = function(data, sendBox)
 
       if (forwardChannel === undefined)
       {
+	 console.log("617 forward: "+ data.forward);
          data.client.channels.fetch(data.forward).then(channel => doSend(channel)).catch(error => sendErr(error));
       }
       else

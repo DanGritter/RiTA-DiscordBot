@@ -177,13 +177,12 @@ const sendTranslation = function(data)
    {
       if (
          data.message.content === "" &&
-         data.message.attachments.array().length > 0
+         data.message.attachments.size > 0
       )
       {
          // -------------
          // Send message
          // -------------
-
          return botSend(data);
       }
 

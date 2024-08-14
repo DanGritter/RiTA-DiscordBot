@@ -42,7 +42,6 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
    {
       message.isAdmin =
          message.member.permissionsIn(message.channel).has(PermissionsBitField.Flags.Administrator);
-      console.log(message.member);
 
       // Add role color
       message.roleColor = fn.getRoleColor(message.member);
