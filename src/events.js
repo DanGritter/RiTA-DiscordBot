@@ -3,16 +3,21 @@
 // -----------------
 
 // codebeat:disable[LOC,ABC,BLOCK_NESTING]
+const { REST } = require("@discordjs/rest");
+const { Routes } = require("discord-api-types/v10");
+const commands = require("./commands");
 const stripIndent = require("common-tags").stripIndent;
 const oneLine = require("common-tags").oneLine;
 const auth = require("./core/auth");
 const logger = require("./core/logger");
+const { ParseInteraction} = require("./commands/args");
 const { messageHandler, alliances, languages} = require("./message");
 const db = require("./core/db");
+const fn = require("./core/helpers");
 const setStatus = require("./core/status");
 const react = require("./commands/translate.react");
 const botVersion = require("../package.json").version;
-const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle, Events } = require("discord.js");
+const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle, Events, ChannelType, PermissionsBitField } = require("discord.js");
 
 const botCreator = "Collaboration";
 
@@ -79,6 +84,36 @@ exports.listen = function(client)
       // ----------------------
       // All shards are online
       // ----------------------
+      const rest = new REST({version: "10"}).setToken(auth.token);
+      rest.put(
+         Routes.applicationCommands(
+            auth.clientId,
+         ),
+         { body: commands }
+      ).then(result =>
+      {
+         console.log("Registered Guild Commands");
+      });
+      //      const Guilds = client.guilds.cache.each((guild,guildId) =>
+      //      {
+      //         try
+      //         {
+      //            rest.put(
+      //               Routes.applicationGuildCommands(
+      //                  auth.clientId,
+      //                  guildId
+      //               ),
+      //               { body: commands }
+      //            ).then(result =>
+      //            {
+      //               console.log(`Registered Guild Commands for ${guild}.`.green);
+      //            });
+      //         }
+      //         catch (error)
+      //         {
+      //            console.error(error);
+      //         }
+      //      });
 
       if (shard.id === shard.count - 1)
       {
@@ -290,6 +325,49 @@ exports.listen = function(client)
                sent.delete();
             }, 2500);
          });
+      }
+      if (interaction.isChatInputCommand())
+      {
+      if (interaction.channel.type === ChannelType.GuildText && interaction.member)
+   {
+      interaction.isAdmin =
+         interaction.member.permissionsIn(interaction.channel).has(PermissionsBitField.Flags.Administrator);
+
+      interaction.isManager =
+         interaction.member.permissionsIn(interaction.channel).has(PermissionsBitField.Flags.ManageChannels);
+      // Add role color
+      interaction.roleColor = fn.getRoleColor(interaction.member);
+   }
+
+         if (interaction.commandName === "clear")
+         {
+            if (interaction.isAdmin)
+            {
+               interaction.channel.bulkDelete(100, true).then((_message) =>
+               {
+                  interaction.reply({content: `Bot cleared \`${_message.size}\` messages :broom:`,
+                     ephemeral: true, hidden: true}).then((sent) =>
+                  {
+                     setTimeout(function ()
+                     {
+                        interaction.deleteReply();
+                     }, 2500);
+                  });
+               });
+            }
+            else
+            {
+               interaction.reply({content: `Not allowed to clear messages!`,
+                  ephemeral: true}).then((sent) => {
+                     setTimeout(function ()
+                     {
+                        interaction.deleteReply();
+                     }, 2500);
+		  });
+            }
+            return;
+         }
+         ParseInteraction(interaction);
       }
    });
 };

@@ -5,7 +5,7 @@
 // codebeat:disable[LOC,ABC,BLOCK_NESTING]
 const db = require("./core/db");
 const fn = require("./core/helpers");
-const cmdArgs = require("./commands/args");
+const { ParseArgs } = require("./commands/args");
 const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle, PermissionsBitField, ChannelType } = require("discord.js");
 
 const alliances = ["wlf","TDS", "OGs", "555", "TIR", "CHO", "BYO", "PrO", "LoU", "TAR", "KSM", "WTF", "DIF", "OPG"];
@@ -71,7 +71,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       message.mentions.members.has(bot)
    )
    {
-      return cmdArgs(data);
+      return ParseArgs(data);
    }
 
    if (

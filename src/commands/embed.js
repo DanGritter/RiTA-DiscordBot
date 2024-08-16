@@ -12,7 +12,6 @@ const discord = require("discord.js");
 // -------------
 // Command Code
 // -------------
-
 module.exports.run = function(data)
 
 {

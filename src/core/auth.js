@@ -6,6 +6,7 @@
 // ------------------------------------------------------------
 
 exports.token = process.env.DISCORD_TOKEN;
+exports.clientId = process.env.CLIENT_ID;    
 
 exports.gcpapikey = process.env.GCP_API_KEY;
 // ----------------------------------------------------------------------

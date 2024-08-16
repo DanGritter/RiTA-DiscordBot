@@ -22,8 +22,28 @@ const cmdSettings = require("./settings");
 const cmdTranslateLast = require("./translate.last");
 const cmdTranslateThis = require("./translate.this");
 const cmdTranslateAuto = require("./translate.auto");
+const cmdTranslateGroup = require("./translate.group");
 const cmdTranslateStop = require("./translate.stop");
 const cmdTranslateTasks = require("./translate.tasks");
+
+const cmdMap = {
+   "this": cmdTranslateThis,
+   "last": cmdTranslateLast,
+   "auto": cmdTranslateAuto,
+   "group": cmdTranslateGroup,
+   "stop": cmdTranslateStop,
+   "tasks": cmdTranslateTasks,
+   "help": cmdHelp,
+   "info": cmdHelp,
+   "list": cmdList,
+   "stats": cmdStats,
+   "embed": cmdEmbed.run,
+   "version": cmdVersion,
+   "invite": cmdMisc.invite,
+   "shards": cmdMisc.shards,
+   "proc": cmdMisc.proc,
+   "settings": cmdSettings
+};
 
 // ---------------------------------------
 // Extract a parameter's value with regex
@@ -119,12 +139,37 @@ const stripPrefix = function(message, config, bot)
 
    return cmd;
 };
+module.exports.ParseInteraction = function(data)
+{
+   var output = {
+      main: data.commandName,
+      params: null
+   };
+
+   if (output.main === "channel")
+   {
+      output.auto = output.main;
+      output.main = "auto";
+   }
+
+   if (data.options.data.length > 0) {
+     output.to = data.options.getString("to");
+     output.from = data.options.getString("from");
+     output.for = data.options.getString("for");
+     output.num = data.options.getInteger("num");
+   }
+   data.cmd = output;
+   if (Object.prototype.hasOwnProperty.call(cmdMap,output.main))
+   {
+      cmdMap[output.main](data);
+   }
+};
 
 // --------------------------------------
 // Analyze arguments from command string
 // --------------------------------------
 
-module.exports = function(data)
+module.exports.ParseArgs = function(data)
 {
    var output = {
       main: stripPrefix(data.message, data.config, `${data.bot}`).trim(),
@@ -216,24 +261,6 @@ module.exports = function(data)
       // Legal Commands
       // ---------------
 
-      const cmdMap = {
-         "this": cmdTranslateThis,
-         "last": cmdTranslateLast,
-         "auto": cmdTranslateAuto,
-         "stop": cmdTranslateStop,
-         "tasks": cmdTranslateTasks,
-         "help": cmdHelp,
-         "info": cmdHelp,
-         "list": cmdList,
-         "stats": cmdStats,
-         "embed": cmdEmbed.run,
-         "version": cmdVersion,
-         "invite": cmdMisc.invite,
-         "shards": cmdMisc.shards,
-         "proc": cmdMisc.proc,
-         "cpu": cmdMisc.cpuUsage,
-         "settings": cmdSettings
-      };
 
       // --------------------------
       // Execute command if exists

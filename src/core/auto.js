@@ -181,6 +181,7 @@ const sendTranslation = function(data)
          data.message.attachments.size > 0
       )
       {
+         data.showAuthor = true;
          // -------------
          // Send message
          // -------------

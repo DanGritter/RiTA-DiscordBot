@@ -306,6 +306,7 @@ const embedOn = function(data)
          {
             const attachmentObj = new discord.AttachmentBuilder().setFile(attachment.url).setName(attachment.name);
             data.channel.send(attachmentObj);
+            return true;
          });
       }
    };
@@ -336,6 +337,7 @@ const embedOff = function(data)
             .setFile(attachment.url)
             .setName(attachment.name);
          files.push(attachmentObj);
+         return true;
       });
       return files;
    }
@@ -486,6 +488,7 @@ const embedOff = function(data)
                .setFile(attachment.url)
                .setName(attachment.name);
             data.channel.send({files: [attachmentObj]});
+            return true;
          });
       }
    };
