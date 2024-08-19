@@ -10,6 +10,7 @@ const fn = require("./helpers");
 const auth = require("./auth");
 
 const translate = new Translate({key: auth.gcpapikey});
+// Creates a client
 // ------------------------------------------
 // Fix broken Discord tags after translation
 // (Emojis, Mentions, Channels)

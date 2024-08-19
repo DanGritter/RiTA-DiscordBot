@@ -152,11 +152,12 @@ module.exports.ParseInteraction = function(data)
       output.main = "auto";
    }
 
-   if (data.options.data.length > 0) {
-     output.to = data.options.getString("to");
-     output.from = data.options.getString("from");
-     output.for = data.options.getString("for");
-     output.num = data.options.getInteger("num");
+   if (data.options.data.length > 0)
+   {
+      output.to = data.options.getString("to");
+      output.from = data.options.getString("from");
+      output.for = data.options.getString("for");
+      output.num = data.options.getInteger("num");
    }
    data.cmd = output;
    if (Object.prototype.hasOwnProperty.call(cmdMap,output.main))

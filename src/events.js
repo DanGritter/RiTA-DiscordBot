@@ -302,14 +302,22 @@ exports.listen = function(client)
          {
             for (const language of languages)
             {
-               member.roles.remove(guild.roles.cache.find(r => r.name === language));
+               var exlrole = guild.roles.cache.find(r => r.name === language);
+               if (exlrole)
+               {
+                  member.roles.remove(exlrole);
+               }
             }
          }
          else if (interaction.customId === "ap_alliances")
          {
             for (const alliance of alliances)
             {
-               member.roles.remove(guild.roles.cache.find(r => r.name === alliance));
+               var exarole = guild.roles.cache.find(r => r.name === alliance);
+               if (exarole)
+               {
+                  member.roles.remove(exarole);
+               }
             }
          }
          const role = guild.roles.cache.find(r => r.name === v_userrole);
@@ -328,16 +336,16 @@ exports.listen = function(client)
       }
       if (interaction.isChatInputCommand())
       {
-      if (interaction.channel.type === ChannelType.GuildText && interaction.member)
-   {
-      interaction.isAdmin =
+         if (interaction.channel.type === ChannelType.GuildText && interaction.member)
+         {
+            interaction.isAdmin =
          interaction.member.permissionsIn(interaction.channel).has(PermissionsBitField.Flags.Administrator);
 
-      interaction.isManager =
+            interaction.isManager =
          interaction.member.permissionsIn(interaction.channel).has(PermissionsBitField.Flags.ManageChannels);
-      // Add role color
-      interaction.roleColor = fn.getRoleColor(interaction.member);
-   }
+            // Add role color
+            interaction.roleColor = fn.getRoleColor(interaction.member);
+         }
 
          if (interaction.commandName === "clear")
          {
@@ -346,7 +354,8 @@ exports.listen = function(client)
                interaction.channel.bulkDelete(100, true).then((_message) =>
                {
                   interaction.reply({content: `Bot cleared \`${_message.size}\` messages :broom:`,
-                     ephemeral: true, hidden: true}).then((sent) =>
+                     ephemeral: true,
+                     hidden: true}).then((sent) =>
                   {
                      setTimeout(function ()
                      {
@@ -358,12 +367,13 @@ exports.listen = function(client)
             else
             {
                interaction.reply({content: `Not allowed to clear messages!`,
-                  ephemeral: true}).then((sent) => {
-                     setTimeout(function ()
-                     {
-                        interaction.deleteReply();
-                     }, 2500);
-		  });
+                  ephemeral: true}).then((sent) =>
+               {
+                  setTimeout(function ()
+                  {
+                     interaction.deleteReply();
+                  }, 2500);
+               });
             }
             return;
          }

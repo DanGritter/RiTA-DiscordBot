@@ -347,15 +347,18 @@ const embedOff = function(data)
    // ---------------------
    function sendWebhookMessage(webhook, data)
    {
+      var ref = null;
       const files = createFiles(data.attachments);
       if (!data.author)
       {
          if (data.text === undefined)
          {
+            if (data.reference) {ref = data.reference.messageId;}
             webhook.send({content: "",
                color: colors.get(data.color),
                username: data.bot.username,
                avatarURL: data.bot.displayAvatarURL(),
+               //               reply: {messageReference: ref},
                files: files
             });
          }
@@ -392,10 +395,12 @@ const embedOff = function(data)
             avatarURL = data.author.displayAvatarURL();
          }
          console.log(`username: ${username}, color: ${data.color}`);
+         if (data.reference) {ref = data.reference.messageId;}
          webhook.send({content: data.text,
             color: colors.get(data.color),
             username: username,
             avatarURL: avatarURL,
+            //            reply: {messageReference: ref},
             files: files
          });
       }
@@ -448,12 +453,14 @@ const embedOff = function(data)
                      avatar: avatarURL})
                      .then(newWebhook =>
                      {
+                        newWebhook.messages = channel.messages;
                         // Finally send the webhook
                         sendWebhookMessage(newWebhook, data);
                      });
                }
                else
                {
+                  existingWebhook.messages = channel.messages;
                   sendWebhookMessage(existingWebhook, data);
                }
             });
@@ -521,6 +528,7 @@ const checkPerms = function(data, sendBox)
          attachments: data.message.attachments,
          forward: data.forward,
          origin: null,
+         reference: data.message.reference,
          bot: data.bot
       };
    }
@@ -582,7 +590,6 @@ const checkPerms = function(data, sendBox)
          // -------------
          // Send message
          // -------------
-
          return sendBox(sendData);
       }
    }

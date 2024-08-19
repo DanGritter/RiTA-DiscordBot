@@ -7,6 +7,12 @@ const translate = require("./translate");
 const logger = require("./logger");
 const botSend = require("./send");
 const fn = require("./helpers");
+const auth = require("./auth");
+// Imports the Google Cloud client libraries
+const vision = require("@google-cloud/vision");
+
+// Creates a client
+const client = new vision.ImageAnnotatorClient({key: auth.gcpapikey});
 
 // -----------------
 // Get data from db
@@ -173,6 +179,10 @@ const startTranslation = function(data, i, row)
 
 const sendTranslation = function(data)
 {
+// const bucketName = 'Bucket where the file resides, e.g. my-bucket';
+// const fileName = 'Path to file within bucket, e.g. path/to/image.png';
+
+   // Performs text detection on the gcs file
    if (data.proccess)
    {
       data.author = data.message.member;
@@ -181,6 +191,16 @@ const sendTranslation = function(data)
          data.message.attachments.size > 0
       )
       {
+         //data.message.attachments.each(attachment =>
+         //{
+         //   client.textDetection(attachment.url).then(result =>
+         //   {
+         //      console.log(result[0]);
+         //      const detections = result[0].textAnnotations;
+         //      console.log("Text:");
+         //      detections.forEach(text => console.log(text));
+         //   });
+         //});
          data.showAuthor = true;
          // -------------
          // Send message
