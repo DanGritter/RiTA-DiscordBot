@@ -5,6 +5,7 @@
 // codebeat:disable[LOC,ABC,BLOCK_NESTING]
 const db = require("./core/db");
 const fn = require("./core/helpers");
+const auth = require("./core/auth");
 const { ParseArgs } = require("./commands/args");
 const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle, PermissionsBitField, ChannelType } = require("discord.js");
 
@@ -145,7 +146,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       const btnrow3 = new ActionRowBuilder().addComponents([
          user_rank
       ]);
-      const channel = message.guild.channels.cache.get("1272664168750911520");
+      const channel = message.guild.channels.cache.get(auth.welcomeChannel);
       channel.messages.cache.forEach(message=>
       {
          channel.messages.delete(message);

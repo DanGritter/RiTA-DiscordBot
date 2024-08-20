@@ -169,7 +169,7 @@ exports.listen = function(client)
    //{
    //   messageHandler(config, message, null, true);
    //});
-   function updateNickname(member)
+   async function updateNickname(member)
    {
       var nickname = member.displayName;
       if (nickname)
@@ -177,23 +177,29 @@ exports.listen = function(client)
          const regex = /\[.*\].*/;
          if (nickname.match(regex))
          {
-            nickname = nickname.substring(nickname.indexOf("]" + 1));
+            nickname = nickname.substring(nickname.indexOf("]") + 1);
          }
          var user_alliance = null;
          var user_rank = null;
+         (await member.guild.members.fetch({ user: member.id, force: true }));
          member.roles.cache.every(role =>
          {
-            if (ranks.contains(role.name))
+            console.log("186 "+role.name);
+            if (ranks.includes(role.name))
             {
+	       console.log("189: "+user_rank);
                user_rank = role.name;
+	       console.log("191: "+user_rank);
             }
-            else if (alliances.contains(role.name))
+            else if (alliances.includes(role.name))
             {
+	       console.log("195: "+user_alliance);
                user_alliance = role.name;
+	       console.log("197: "+user_alliance);
             }
             return true;
          });
-
+         console.log("201: "+"["+user_alliance + " " + user_rank+"]"+nickname);
          member.setNickname("["+user_alliance + " " + user_rank+"]"+nickname);
       }
    }
@@ -361,7 +367,7 @@ exports.listen = function(client)
          }
          const role = guild.roles.cache.find(r => r.name === v_userrole);
          member.roles.add(role);
-         //        updateNickname(member);
+         updateNickname(member);
 
          interaction.reply({
             content: `Thank you / Danke / Спасибо`,
