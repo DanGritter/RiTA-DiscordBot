@@ -8,7 +8,7 @@ const fn = require("./core/helpers");
 const { ParseArgs } = require("./commands/args");
 const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle, PermissionsBitField, ChannelType } = require("discord.js");
 
-const alliances = ["wlf","TDS", "OGs", "555", "TIR", "OPS", "BYO", "PrO", "LoU", "TAR", "KSM", "WTF", "DIF", "OPG"];
+const alliances = ["wlf","TDS", "OGs", "555", "TIR", "OPS", "BYO", "PrO", "LoU", "TAR", "KSM", "WTF", "DIF"];
 const languages = ["English", "Russian", "German"];
 const language_labels = ["English", "Русский", "Deutsch"];
 
