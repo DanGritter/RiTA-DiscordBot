@@ -319,12 +319,14 @@ exports.listen = function(client)
                   member.roles.remove(exarole);
                }
                var nickname = interaction.user.displayName;
-               const regex = /\[...\].*/;
-               if (nickname.matches(regex))
-               {
-                  nickname = nickname.substring(5);
-               }
-               interaction.user.setNickname("["+v_userrole+"]"+nickname);
+               if (nickname) {
+                  const regex = /\[...\].*/;
+                  if (nickname.match(regex))
+                  {
+                     nickname = nickname.substring(5);
+                  }
+                  interaction.user.setNickname("["+v_userrole+"]"+nickname);
+	       }
             }
          }
          else if (interaction.customId === "ap_ranks")
