@@ -169,7 +169,34 @@ exports.listen = function(client)
    //{
    //   messageHandler(config, message, null, true);
    //});
+   function updateNickname(member)
+   {
+      var nickname = member.displayName;
+      if (nickname)
+      {
+         const regex = /\[.*\].*/;
+         if (nickname.match(regex))
+         {
+            nickname = nickname.substring(nickname.indexof("]" + 1));
+         }
+         var user_alliance = null;
+         var user_rank = null;
+         member.roles.cache.every(role =>
+         {
+            if (ranks.contains(role.name))
+            {
+               user_rank = role.name;
+            }
+            else if (alliances.contains(role.name))
+            {
+               user_alliance = role.name;
+            }
+            return true;
+         });
 
+         member.setNickname("["+user_alliance + " " + user_rank+"]"+nickname);
+      }
+   }
    // -----------
    // Raw events
    // -----------
@@ -318,15 +345,6 @@ exports.listen = function(client)
                {
                   member.roles.remove(exarole);
                }
-               var nickname = interaction.user.displayName;
-               if (nickname) {
-                  const regex = /\[...\].*/;
-                  if (nickname.match(regex))
-                  {
-                     nickname = nickname.substring(5);
-                  }
-                  interaction.member.setNickname("["+v_userrole+"]"+nickname);
-	       }
             }
          }
          else if (interaction.customId === "ap_ranks")
@@ -342,6 +360,7 @@ exports.listen = function(client)
          }
          const role = guild.roles.cache.find(r => r.name === v_userrole);
          member.roles.add(role);
+         updateNickname(member);
 
          interaction.reply({
             content: `Thank you / Danke / Спасибо`,
