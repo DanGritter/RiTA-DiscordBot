@@ -147,7 +147,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       const btnrow3 = new ActionRowBuilder().addComponents([
          user_rank
       ]);
-      const channel = message.guild.channels.cache.get(auth.welcomeChannel);
+      const channel = message.guild.channels.cache.get(auth.setupChannel);
       channel.messages.cache.forEach(message=>
       {
          channel.messages.delete(message);

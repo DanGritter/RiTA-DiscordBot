@@ -345,10 +345,10 @@ exports.listen = function(client)
 
    client.on("interactionCreate", async(interaction) =>
    {
-
       if (interaction.customId === "ap_alliances" || interaction.customId === "ap_languages" || interaction.customId === "ap_ranks")
       {
-         const member = await interaction.guild.members.fetch({ user: interaction.member.id, force: true });
+         const member = await interaction.guild.members.fetch({ user: interaction.member.id,
+            force: true });
          const v_userrole = interaction.values[0];
          const guild = interaction.guild;
          if (interaction.customId === "ap_languages")

@@ -38,6 +38,7 @@ exports.loggerWebhookID = process.env.DISCORD_DEBUG_WEBHOOK_ID;
 exports.loggerWebhookToken = process.env.DISCORD_DEBUG_WEBHOOK_TOKEN;
 
 exports.welcomeChannel = process.env.WELCOME_CHANNEL;
+exports.setupChannel = process.env.SETUP_CHANNEL;
 
 // ---------------------------
 // Allow intervals (optional)
