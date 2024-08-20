@@ -177,7 +177,7 @@ exports.listen = function(client)
          const regex = /\[.*\].*/;
          if (nickname.match(regex))
          {
-            nickname = nickname.substring(nickname.indexof("]" + 1));
+            nickname = nickname.substring(nickname.indexOf("]" + 1));
          }
          var user_alliance = null;
          var user_rank = null;
