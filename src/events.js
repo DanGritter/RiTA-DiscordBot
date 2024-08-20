@@ -325,7 +325,7 @@ exports.listen = function(client)
                   {
                      nickname = nickname.substring(5);
                   }
-                  interaction.user.setNickname("["+v_userrole+"]"+nickname);
+                  interaction.member.setNickname("["+v_userrole+"]"+nickname);
 	       }
             }
          }
