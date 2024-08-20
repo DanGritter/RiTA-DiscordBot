@@ -8,6 +8,7 @@ const fn = require("./core/helpers");
 const auth = require("./core/auth");
 const { ParseArgs } = require("./commands/args");
 const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle, PermissionsBitField, ChannelType } = require("discord.js");
+const stripIndent = require("common-tags").stripIndent;
 
 const alliances = ["wlf","TDS", "OGs", "555", "TIR", "OPS", "BYO", "PrO", "LoU", "TAR", "KSM", "WTF", "DIF"];
 const languages = ["English", "Russian", "German"];
@@ -152,15 +153,24 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
          channel.messages.delete(message);
       });
       channel.send({
-         content: `Which alliance are you in?  In welcher Allianz bist du?  В каком альянсе вы состоите?`,
+         content: stripIndent`
+	                      Which alliance are you in?  
+	                      In welcher Allianz bist du?  
+	                      В каком альянсе вы состоите?`,
          components: [btnrow]
       });
       channel.send({
-         content: `Which language do you speak? Welche Sprache sprechen Sie? На каком языке вы говорите?`,
+         content: stripIndent`
+	                     Which language do you speak? 
+	                     Welche Sprache sprechen Sie? 
+	                     На каком языке вы говорите?`,
          components: [btnrow2]
       });
       channel.send({
-         content: `Which rank are you? Welchen Rang hast du? Какой у тебя ранг?`,
+         content: stripIndent`
+	                      Which rank are you?
+	                      Welchen Rang hast du? 
+	                      Какой у тебя ранг?`,
          components: [btnrow3]
       });
       return;

@@ -93,11 +93,7 @@ module.exports = function(data)
    // ----------------------------------------------------
 
 
-   console.log(`Guild ID from message`);
-   console.log(`Raw = ` + data.message.guild.id);
    const guildValue = data.message.guild.id;
-   console.log(`Const = ` + guildValue);
-   console.log(`---------------------`);
 
    function ignoreMessage()
    {
@@ -115,7 +111,6 @@ module.exports = function(data)
       });
    }
 
-   console.log(`db.set Stage 1 = ` + db.setEmbedVar());
    db.getEmbedVar(guildValue);
 
    if (db.setEmbedVar() === "")
@@ -131,12 +126,6 @@ module.exports = function(data)
       //      data.text = output;
       //      return ignoreMessage();
    }
-   else
-   // eslint-disable-next-line no-else-return
-   {
-      console.log(`db.set Stage 3 = ` + db.setEmbedVar());
-   }
-   console.log(`db.set Stage 4 = ` + db.setEmbedVar());
 
    // --------------------
    // Primary If Statment

@@ -174,6 +174,7 @@ exports.listen = function(client)
       var nickname = member.displayName;
       if (nickname)
       {
+         nickname = member.displayName;
          const regex = /\[.*\].*/;
          if (nickname.match(regex))
          {
@@ -181,7 +182,6 @@ exports.listen = function(client)
          }
          var user_alliance = null;
          var user_rank = null;
-         (await member.guild.members.fetch({ user: member.id, force: true }));
          member.roles.cache.every(role =>
          {
             console.log("186 "+role.name);
@@ -199,6 +199,7 @@ exports.listen = function(client)
             }
             return true;
          });
+
          console.log("201: "+"["+user_alliance + " " + user_rank+"]"+nickname);
          member.setNickname("["+user_alliance + " " + user_rank+"]"+nickname);
       }
@@ -240,9 +241,19 @@ exports.listen = function(client)
       return logger("warn", info);
    });
 
+
+   client.on("guildMemberUpdate", (oldMember,newMember) =>
+   {
+      // If the role(s) are present on the new member object but are not on the old one (i.e role(s) were added)
+      const addedRoles = newMember.roles.cache.filter(role => !oldMember.roles.cache.has(role.id));
+      if (addedRoles.size > 0)
+      {
+         updateNickname(newMember);
+      }
+   });
    client.on("guildMemberRemove", guildmember =>
    {
-      const channel = guildmember.guild.channels.cache.get("1271530367794548739");
+      const channel = guildmember.guild.channels.cache.get(auth.welcomeChannel);
       channel.send({
          content: `${guildmember} has left the server!`
       });
@@ -367,7 +378,6 @@ exports.listen = function(client)
          }
          const role = guild.roles.cache.find(r => r.name === v_userrole);
          member.roles.add(role);
-         updateNickname(member);
 
          interaction.reply({
             content: `Thank you / Danke / Спасибо`,

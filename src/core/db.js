@@ -26,7 +26,7 @@ const db = process.env.DATABASE_URL.endsWith(".db") ?
       storage: process.env.DATABASE_URL
    }) :
    new Sequelize(process.env.DATABASE_URL, {
-      logging: console.log,
+   //   logging: console.log,
       dialectOptions: {
          ssl: {
             require: true,
