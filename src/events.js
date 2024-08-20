@@ -360,7 +360,7 @@ exports.listen = function(client)
          }
          const role = guild.roles.cache.find(r => r.name === v_userrole);
          member.roles.add(role);
-         updateNickname(member);
+//        updateNickname(member);
 
          interaction.reply({
             content: `Thank you / Danke / Спасибо`,
