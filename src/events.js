@@ -169,8 +169,10 @@ exports.listen = function(client)
    //{
    //   messageHandler(config, message, null, true);
    //});
-   async function updateNickname(member)
+   async function updateNickname(stalemember)
    {
+      const member = await stalemember.guild.members.fetch({ user: stalemember.id,
+         force: true });
       var nickname = member.displayName;
       if (nickname)
       {
@@ -241,6 +243,7 @@ exports.listen = function(client)
       return logger("warn", info);
    });
 
+   var timeout = {};
 
    client.on("guildMemberUpdate", (oldMember,newMember) =>
    {
@@ -248,7 +251,11 @@ exports.listen = function(client)
       const addedRoles = newMember.roles.cache.filter(role => !oldMember.roles.cache.has(role.id));
       if (addedRoles.size > 0)
       {
-         updateNickname(newMember);
+         if (!timeout[newMember.id])
+         {
+            const timeid = setTimeout(function() { updateNickname(newMember); delete timeout[newMember.id]; },5000);
+            timeout[newMember.id] = timeid;
+	 }
       }
    });
    client.on("guildMemberRemove", guildmember =>
@@ -338,16 +345,17 @@ exports.listen = function(client)
 
    client.on("interactionCreate", async(interaction) =>
    {
+
       if (interaction.customId === "ap_alliances" || interaction.customId === "ap_languages" || interaction.customId === "ap_ranks")
       {
+         const member = await interaction.guild.members.fetch({ user: interaction.member.id, force: true });
          const v_userrole = interaction.values[0];
          const guild = interaction.guild;
-         const member = interaction.member;
          if (interaction.customId === "ap_languages")
          {
             for (const language of languages)
             {
-               var exlrole = guild.roles.cache.find(r => r.name === language);
+               var exlrole = member.roles.cache.find(r => r.name === language);
                if (exlrole)
                {
                   member.roles.remove(exlrole);
@@ -358,7 +366,7 @@ exports.listen = function(client)
          {
             for (const alliance of alliances)
             {
-               var exarole = guild.roles.cache.find(r => r.name === alliance);
+               var exarole = member.roles.cache.find(r => r.name === alliance);
                if (exarole)
                {
                   member.roles.remove(exarole);
@@ -369,7 +377,7 @@ exports.listen = function(client)
          {
             for (const rank of ranks)
             {
-               var exrrole = guild.roles.cache.find(r => r.name === rank);
+               var exrrole = member.roles.cache.find(r => r.name === rank);
                if (exrrole)
                {
                   member.roles.remove(exrrole);
