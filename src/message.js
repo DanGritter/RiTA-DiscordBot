@@ -12,8 +12,11 @@ const alliances = ["wlf","TDS", "OGs", "555", "TIR", "OPS", "BYO", "PrO", "LoU",
 const languages = ["English", "Russian", "German"];
 const language_labels = ["English", "Русский", "Deutsch"];
 
+const ranks = ["R1", "R2", "R3", "R4", "R5"];
+
 module.exports.alliances = alliances;
 module.exports.languages = languages;
+module.exports.ranks = ranks;
 module.exports.language_labels = language_labels;
 // --------------------
 // Listen for messages
@@ -105,6 +108,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
    {
       const alliance_options = [];
       const language_options = [];
+      const rank_options = [];
       for (var e of alliances)
       {
          alliance_options.push(new StringSelectMenuOptionBuilder()
@@ -117,17 +121,29 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
             .setLabel(language_labels[l])
             .setValue(languages[l]));
       }
+      for (var r in ranks)
+      {
+         rank_options.push(new StringSelectMenuOptionBuilder()
+            .setLabel(ranks[r])
+            .setValue(ranks[r]));
+      }
       const user_role = new StringSelectMenuBuilder()
          .setCustomId("ap_alliances")
          .setPlaceholder("Select your alliance!").addOptions(alliance_options);
       const user_language = new StringSelectMenuBuilder()
          .setCustomId("ap_languages")
          .setPlaceholder("Select your language!").addOptions(language_options);
+      const user_rank = new StringSelectMenuBuilder()
+         .setCustomId("ap_ranks")
+         .setPlaceholder("Select your rank!").addOptions(rank_options);
       const btnrow = new ActionRowBuilder().addComponents([
          user_role
       ]);
       const btnrow2 = new ActionRowBuilder().addComponents([
          user_language
+      ]);
+      const btnrow3 = new ActionRowBuilder().addComponents([
+         user_rank
       ]);
       const channel = message.guild.channels.cache.get("1272664168750911520");
       channel.messages.cache.forEach(message=>
@@ -141,6 +157,10 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       channel.send({
          content: `Which language do you speak? Welche Sprache sprechen Sie? На каком языке вы говорите?`,
          components: [btnrow2]
+      });
+      channel.send({
+         content: `Which rank are you? Welchen Rang hast du? Какой у тебя ранг?`,
+         components: [btnrow3]
       });
       return;
    }

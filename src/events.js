@@ -11,7 +11,7 @@ const oneLine = require("common-tags").oneLine;
 const auth = require("./core/auth");
 const logger = require("./core/logger");
 const { ParseInteraction} = require("./commands/args");
-const { messageHandler, alliances, languages} = require("./message");
+const { messageHandler, alliances, languages,ranks} = require("./message");
 const db = require("./core/db");
 const fn = require("./core/helpers");
 const setStatus = require("./core/status");
@@ -293,7 +293,7 @@ exports.listen = function(client)
 
    client.on("interactionCreate", async(interaction) =>
    {
-      if (interaction.customId === "ap_alliances" || interaction.customId === "ap_languages")
+      if (interaction.customId === "ap_alliances" || interaction.customId === "ap_languages" || interaction.customId === "ap_ranks")
       {
          const v_userrole = interaction.values[0];
          const guild = interaction.guild;
@@ -317,6 +317,24 @@ exports.listen = function(client)
                if (exarole)
                {
                   member.roles.remove(exarole);
+               }
+               var nickname = interaction.user.displayName;
+               const regex = /\[...\].*/;
+               if (nickname.matches(regex))
+               {
+                  nickname = nickname.substring(5);
+               }
+               interaction.user.setNickname("["+v_userrole+"]"+nickname);
+            }
+         }
+         else if (interaction.customId === "ap_ranks")
+         {
+            for (const rank of ranks)
+            {
+               var exrrole = guild.roles.cache.find(r => r.name === rank);
+               if (exrrole)
+               {
+                  member.roles.remove(exrrole);
                }
             }
          }
