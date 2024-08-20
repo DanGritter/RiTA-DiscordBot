@@ -394,7 +394,6 @@ const embedOff = function(data)
             }
             avatarURL = data.author.displayAvatarURL();
          }
-         console.log(`username: ${username}, color: ${data.color}`);
          if (data.reference) {ref = data.reference.messageId;}
          webhook.send({content: data.text,
             color: colors.get(data.color),

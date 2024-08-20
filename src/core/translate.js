@@ -78,6 +78,7 @@ const bufferChains = function(data, from)
    {
       const chainMsgs = chain.msgs.join("\n");
       const to = data.translate.to.valid[0].iso;
+      console.log(`translating '${chainMsgs}' to ${to} from ${from} `);
       translate.translate(chainMsgs,
          {to: to,
             from:
@@ -266,7 +267,7 @@ module.exports = function(data) //eslint-disable-line complexity
 
       data.translate.to.valid.forEach(lang =>
       {
-         console.log(data.translate.original,lang.iso,from);
+         console.log(`translating '${data.translate.original}' to ${lang.iso} from ${from}`);
          translate.translate(data.translate.original, {
             to: lang.iso,
             from: from
@@ -301,6 +302,7 @@ module.exports = function(data) //eslint-disable-line complexity
 
    textArray.forEach(chunk =>
    {
+      console.log(`translating ${chunk} to ${opts.to} from ${opts.from} `);
       translate.translate(chunk, opts).then(res =>
       {
          updateServerStats(data.message);

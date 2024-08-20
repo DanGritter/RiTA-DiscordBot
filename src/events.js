@@ -309,12 +309,13 @@ exports.listen = function(client)
          const channel = guildmember.guild.channels.cache.get("1271530367794548739");
          channel.send(stripIndent`
                     Welcome to ${guildmember.guild} ${guildmember}!
-                    Willkommen bei ${guildmember.guild}
-                    добро пожаловать ${guildmember.guild}
-              
                     Please go to <#1272664168750911520> to setup languages and alliance!
-                    Пожалуйста, перейдите по ссылке <#1272664168750911520>, чтобы настроить языки и альянс!
-                    Bitte gehen Sie zu <#1272664168750911520>, um Sprachen und Allianzen einzurichten!  `);
+
+                    Willkommen bei ${guildmember.guild}
+                    Bitte gehen Sie zu <#1272664168750911520>, um Sprachen und Allianzen einzurichten!  
+
+                    добро пожаловать ${guildmember.guild}
+                    Пожалуйста, перейдите по ссылке <#1272664168750911520>, чтобы настроить языки и альянс!`);
       }, 3000);
    });
 
@@ -360,7 +361,7 @@ exports.listen = function(client)
          }
          const role = guild.roles.cache.find(r => r.name === v_userrole);
          member.roles.add(role);
-//        updateNickname(member);
+         //        updateNickname(member);
 
          interaction.reply({
             content: `Thank you / Danke / Спасибо`,
