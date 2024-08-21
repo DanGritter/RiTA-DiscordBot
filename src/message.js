@@ -86,12 +86,15 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
    {
       if (message.isAdmin)
       {
-         message.guild.members.fetch().then(member=>
+         message.guild.members.fetch().then(members=>
          {
-            if (member.id !== message.guild.ownerId)
+            members.each(member =>
             {
-               events.nickname(member, false);
-            }
+               if (member.id !== message.guild.ownerId)
+               {
+                  events.nickname(member, false);
+               }
+            });
          });
          message.reply({content: `Nicknames updated`,
             ephemeral: true});
