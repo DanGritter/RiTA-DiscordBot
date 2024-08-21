@@ -384,7 +384,12 @@ const embedOff = function(data)
             avatarURL = data.author.displayAvatarURL();
          }
          if (data.reference) {ref = data.reference.messageId;}
-         webhook.send({content: data.text,
+         let content = data.text;
+         if (data.link)
+         {
+		 content = content+` [:small_red_triangle:](${data.link})`;
+	 }
+         webhook.send({content: content,
             color: colors.get(data.color),
             username: username,
             avatarURL: avatarURL,
@@ -441,7 +446,6 @@ const embedOff = function(data)
                      avatar: avatarURL})
                      .then(newWebhook =>
                      {
-                        newWebhook.messages = channel.messages;
                         // Finally send the webhook
                         sendWebhookMessage(newWebhook, data);
                      });
@@ -517,6 +521,7 @@ const checkPerms = function(data, sendBox)
          forward: data.forward,
          origin: null,
          reference: data.message.reference,
+         link: data.message.url,
          bot: data.bot
       };
    }
