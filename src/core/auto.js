@@ -185,8 +185,7 @@ const sendTranslation = async function(data)
    if (data.proccess)
    {
       data.author = data.message.member;
-      if (
-         data.message.content === "" &&
+      if ( data.message.attachments && 
          data.message.attachments.size > 0
       )
       {

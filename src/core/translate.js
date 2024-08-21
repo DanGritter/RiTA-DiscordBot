@@ -306,7 +306,7 @@ module.exports = function(data,cb) //eslint-disable-line complexity
       data.color = data.author.displayHexColor;
       data.text = translateFix(res[1].data.translations[0].translatedText);
       data.showAuthor = true;
-      if (data.message.attachments)
+      if (data.message.attachments && data.message.attachments.size > 0)
       {
          data.message.attachments.each(function(attachment,index)
          {
@@ -372,6 +372,10 @@ module.exports = function(data,cb) //eslint-disable-line complexity
                   });
             }
          });
+      }
+      else
+      {
+         getUserColor(data,cb);
       }
    });
    return;

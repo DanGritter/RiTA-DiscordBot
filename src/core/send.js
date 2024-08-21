@@ -294,14 +294,17 @@ const embedOn = function(data)
          attachments.every(attachment =>
          {
             console.log(typeof attachment);
-            if (attachment.url) {
-              const attachmentObj = new discord.AttachmentBuilder().
-	          	 setFile(attachment.url).
-	          	 setName(attachment.name);
-              data.channel.send(attachmentObj);
-	    } else {
-              data.channel.send(attachment);
-	    }
+            if (attachment.url)
+            {
+               const attachmentObj = new discord.AttachmentBuilder().
+                  setFile(attachment.url).
+                  setName(attachment.name);
+               data.channel.send(attachmentObj);
+            }
+            else
+            {
+               data.channel.send(attachment);
+            }
             return true;
          });
       }
@@ -329,14 +332,17 @@ const embedOff = function(data)
       const files = [];
       attachments.every(attachment =>
       {
-         if (attachment.url) {
-         const attachmentObj = new discord.AttachmentBuilder()
-            .setFile(attachment.url)
-            .setName(attachment.name);
-         files.push(attachmentObj);
-	 } else {
-         files.push(attachment);
-	 }
+         if (attachment.url)
+         {
+            const attachmentObj = new discord.AttachmentBuilder()
+               .setFile(attachment.url)
+               .setName(attachment.name);
+            files.push(attachmentObj);
+         }
+         else
+         {
+            files.push(attachment);
+         }
          return true;
       });
       return files;
@@ -501,14 +507,17 @@ const embedOff = function(data)
 
          attachments.every(attachment =>
          {
-            if (attachment.url) {
-            const attachmentObj = new discord.AttachmentBuilder()
-               .setFile(attachment.url)
-               .setName(attachment.name);
-            data.channel.send({files: [attachmentObj]});
-	    } else {
-            data.channel.send({files: [attachment]});
-	    }
+            if (attachment.url)
+            {
+               const attachmentObj = new discord.AttachmentBuilder()
+                  .setFile(attachment.url)
+                  .setName(attachment.name);
+               data.channel.send({files: [attachmentObj]});
+            }
+            else
+            {
+               data.channel.send({files: [attachment]});
+            }
             return true;
          });
       }
