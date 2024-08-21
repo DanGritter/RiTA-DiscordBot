@@ -387,10 +387,13 @@ const embedOff = function(data)
          let content = data.text;
          if (data.link)
          {
-		 if (content) {
+		 if (content)
+            {
 		 content = content+` [(^)](${data.link})`;
-		 } else {
-                   content = `[(^)](${data.link})`;
+		 }
+            else
+            {
+               content = `[(^)](${data.link})`;
 		 }
 	 }
          webhook.send({content: content,

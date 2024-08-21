@@ -226,7 +226,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
          content: stripIndent`
                              Which rank are you?
                              Welchen Rang hast du? 
-                             Какой у тебя ранг?`,
+                             Какой у вас ранг?`,
          components: [btnrow3]
       });
       return;

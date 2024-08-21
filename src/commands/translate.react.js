@@ -87,4 +87,41 @@ module.exports = function(data, user, client)
          }
       );
    }
+   else
+   if (data.message.author.bot)
+   {
+      fn.getMessage(
+         client,
+         data.message.id,
+         data.message.channel.id,
+         user,
+         (message, err) =>
+         {
+            let origMessage = message.content;
+            if (origMessage)
+            {
+               const indexoflink = origMessage.lastIndexOf("(^)");
+               origMessage = origMessage.substring(indexoflink);
+               let indexofchannel = origMessage.indexOf("channels/")+9;
+               indexofchannel = origMessage.indexOf("/",indexofchannel)+1;
+               const indexoflinkend = origMessage.lastIndexOf(")");
+               const indexofmessage = origMessage.lastIndexOf("/");
+               const messageId = origMessage.substring(indexofmessage+1,indexoflinkend);
+               const channelId = origMessage.substring(indexofchannel,indexofmessage);
+               fn.getMessage(
+                  client,
+                  messageId,
+                  channelId,
+                  user,
+                  (origMessage, err) =>
+                  {
+			  if (err) {
+				  console.log(err);
+			  } else {
+                              origMessage.react(data.emoji.name);
+			  }
+                  });
+            }
+         });
+   }
 };
