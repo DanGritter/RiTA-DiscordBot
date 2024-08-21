@@ -25,7 +25,7 @@ const botCreator = "Collaboration";
 // Core Code
 // ----------
 
-async function updateNickname(stalemember)
+async function updateNickname(stalemember,real)
 {
    const member = await stalemember.guild.members.fetch({ user: stalemember.id,
       force: true });
@@ -52,8 +52,18 @@ async function updateNickname(stalemember)
          }
          return true;
       });
-
-      member.setNickname("["+user_alliance + " " + user_rank+"]"+nickname);
+      if (real)
+      {
+         if (user_alliance && user_rank)
+         {
+            member.setNickname("["+user_alliance + " " + user_rank+"]"+nickname);
+         }
+      }
+      else
+      if (user_alliance && user_rank)
+      {
+         console.log("["+user_alliance + " " + user_rank+"]"+nickname);
+      }
    }
 }
 exports.nickname = updateNickname;
@@ -251,7 +261,7 @@ exports.listen = function(client)
          {
             const timeid = setTimeout(function() { updateNickname(newMember); delete timeout[newMember.id]; },5000);
             timeout[newMember.id] = timeid;
-	 }
+         }
       }
    });
    client.on("guildMemberRemove", guildmember =>

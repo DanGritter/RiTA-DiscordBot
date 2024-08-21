@@ -84,19 +84,23 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       message.content.startsWith("!nickname")
    )
    {
-            if (message.isAdmin)
-            {
-      message.guild.members.cache.each(member=>
+      if (message.isAdmin)
       {
-         events.nickname(member);
-      });
+         message.guild.members.cache.each(member=>
+         {
+            if (member.id !== message.guild.ownerId)
+            {
+               events.nickname(member, false);
+            }
+         });
          message.reply({content: `Nicknames updated`,
             ephemeral: true});
-	    } else {
+      }
+      else
+      {
          message.reply({content: `Not allowed to set nicknames`,
             ephemeral: true});
-
-	    }
+      }
       return;
    }
    if (
@@ -174,23 +178,23 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       });
       channel.send({
          content: stripIndent`
-	                      Which alliance are you in?  
-	                      In welcher Allianz bist du?  
-	                      В каком альянсе вы состоите?`,
+                             Which alliance are you in?  
+                             In welcher Allianz bist du?  
+                             В каком альянсе вы состоите?`,
          components: [btnrow]
       });
       channel.send({
          content: stripIndent`
-	                     Which language do you speak? 
-	                     Welche Sprache sprechen Sie? 
-	                     На каком языке вы говорите?`,
+                            Which language do you speak? 
+                            Welche Sprache sprechen Sie? 
+                            На каком языке вы говорите?`,
          components: [btnrow2]
       });
       channel.send({
          content: stripIndent`
-	                      Which rank are you?
-	                      Welchen Rang hast du? 
-	                      Какой у тебя ранг?`,
+                             Which rank are you?
+                             Welchen Rang hast du? 
+                             Какой у тебя ранг?`,
          components: [btnrow3]
       });
       return;
