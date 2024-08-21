@@ -293,8 +293,15 @@ const embedOn = function(data)
          }
          attachments.every(attachment =>
          {
-            const attachmentObj = new discord.AttachmentBuilder().setFile(attachment.url).setName(attachment.name);
-            data.channel.send(attachmentObj);
+            console.log(typeof attachment);
+            if (attachment.url) {
+              const attachmentObj = new discord.AttachmentBuilder().
+	          	 setFile(attachment.url).
+	          	 setName(attachment.name);
+              data.channel.send(attachmentObj);
+	    } else {
+              data.channel.send(attachment);
+	    }
             return true;
          });
       }
@@ -322,10 +329,14 @@ const embedOff = function(data)
       const files = [];
       attachments.every(attachment =>
       {
+         if (attachment.url) {
          const attachmentObj = new discord.AttachmentBuilder()
             .setFile(attachment.url)
             .setName(attachment.name);
          files.push(attachmentObj);
+	 } else {
+         files.push(attachment);
+	 }
          return true;
       });
       return files;
@@ -387,15 +398,15 @@ const embedOff = function(data)
          let content = data.text;
          if (data.link)
          {
-		 if (content)
+            if (content)
             {
-		 content = content+` [(^)](${data.link})`;
-		 }
+               content = content+` [(^)](${data.link})`;
+            }
             else
             {
                content = `[(^)](${data.link})`;
-		 }
-	 }
+            }
+         }
          webhook.send({content: content,
             color: colors.get(data.color),
             username: username,
@@ -490,10 +501,14 @@ const embedOff = function(data)
 
          attachments.every(attachment =>
          {
+            if (attachment.url) {
             const attachmentObj = new discord.AttachmentBuilder()
                .setFile(attachment.url)
                .setName(attachment.name);
             data.channel.send({files: [attachmentObj]});
+	    } else {
+            data.channel.send({files: [attachment]});
+	    }
             return true;
          });
       }

@@ -254,7 +254,11 @@ exports.listen = function(client)
       {
          if (!timeout[newMember.id])
          {
-            const timeid = setTimeout(function() { updateNickname(newMember); delete timeout[newMember.id]; },5000);
+            const timeid = setTimeout(function()
+            {
+               updateNickname(newMember);
+               delete timeout[newMember.id];
+            },5000);
             timeout[newMember.id] = timeid;
          }
       }

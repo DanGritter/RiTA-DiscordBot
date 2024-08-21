@@ -47,5 +47,5 @@ module.exports = function(data)
       multi: true
    };
 
-   translate(data);
+   translate(data,botSend);
 };

@@ -8,8 +8,9 @@ const db = require("./db");
 const botSend = require("./send");
 const fn = require("./helpers");
 const auth = require("./auth");
-
+const discord = require("discord.js");
 const translate = new Translate({key: auth.gcpapikey});
+var Jimp = require("jimp");
 // Creates a client
 // ------------------------------------------
 // Fix broken Discord tags after translation
@@ -52,7 +53,7 @@ function getUserColor(data, callback)
 // Translate buffered chains
 // --------------------------
 
-const bufferSend = function(arr, data)
+const bufferSend = function(arr, data, cb)
 {
    const sorted = fn.sortByKey(arr, "time");
    sorted.forEach(msg =>
@@ -66,11 +67,11 @@ const bufferSend = function(arr, data)
       // Send message
       // -------------
 
-      botSend(data);
+      cb(data);
    });
 };
 
-const bufferChains = function(data, from)
+const bufferChains = function(data, from, cb)
 {
    var translatedChains = [];
 
@@ -96,7 +97,7 @@ const bufferChains = function(data, from)
 
             if (fn.bufferEnd(data.bufferChains, translatedChains))
             {
-               bufferSend(translatedChains, data);
+               bufferSend(translatedChains, data,cb);
             }
          });
       });
@@ -135,7 +136,7 @@ const updateServerStats = function(message)
 // Run translation
 // ----------------
 
-module.exports = function(data) //eslint-disable-line complexity
+module.exports = function(data,cb) //eslint-disable-line complexity
 {
    // -------------------------
    // Report invalid languages
@@ -151,7 +152,7 @@ module.exports = function(data) //eslint-disable-line complexity
       // Send message
       // -------------
 
-      botSend(data);
+      cb(null, data);
    });
 
    invalidLangChecker(data.translate.to, function()
@@ -164,7 +165,7 @@ module.exports = function(data) //eslint-disable-line complexity
       // Send message
       // -------------
 
-      botSend(data);
+      cb(null,data);
    });
 
    // -------------------------------------
@@ -211,7 +212,7 @@ module.exports = function(data) //eslint-disable-line complexity
 
    if (data.bufferChains)
    {
-      return bufferChains(data, from, guild);
+      return bufferChains(data, from, guild, cb);
    }
 
    // -----------------------------
@@ -235,7 +236,7 @@ module.exports = function(data) //eslint-disable-line complexity
          // Send message
          // -------------
 
-         return botSend(data);
+         return cb(null,data);
       }
 
       // --------------------
@@ -262,7 +263,7 @@ module.exports = function(data) //eslint-disable-line complexity
                data.text = this.text;
                data.color = data.author.displayHexColor;
                data.showAuthor = true;
-               getUserColor(data, botSend);
+               getUserColor(data, cb);
             }
          }
       };
@@ -297,21 +298,81 @@ module.exports = function(data) //eslint-disable-line complexity
    // --------------------
    // Split long messages
    // --------------------
-
-   const textArray = fn.chunkString(data.translate.original, 1500);
-
-   textArray.forEach(chunk =>
+   translate.translate(data.translate.original, opts).then(res =>
    {
-      translate.translate(chunk, opts).then(res =>
+      updateServerStats(data.message);
+      data.forward = fw;
+      data.footer = ft;
+      data.color = data.author.displayHexColor;
+      data.text = translateFix(res[1].data.translations[0].translatedText);
+      data.showAuthor = true;
+      if (data.message.attachments)
       {
-         updateServerStats(data.message);
-         data.forward = fw;
-         data.footer = ft;
-         data.color = data.author.displayHexColor;
-         data.text = translateFix(res[1].data.translations[0].translatedText);
-         data.showAuthor = true;
-         return getUserColor(data, botSend);
-      });
+         data.message.attachments.each(function(attachment,index)
+         {
+            if (attachment.annotations)
+            {
+               var loadedImage;
+               var lightfont;
+               var darkfont;
+               const promise = Jimp.read(attachment.url)
+                  .then(function (image)
+                  {
+                     loadedImage = image;
+                     return Jimp.loadFont("./fonts/ibmplexsansblack.fnt");
+                  })
+                  .then(function (font)
+                  {
+                     darkfont = font;
+                     return Jimp.loadFont("./fonts/ibmplexsanswhite.fnt");
+                  }).then(function (font)
+                  {
+                     lightfont = font;
+                     var tpromises = [];
+                     var tpromiseIndex = 0;
+                     attachment.annotations.forEach(paragraph =>
+                     {
+                        const tpromise = translate.translate(paragraph.text,opts).then(res=>
+                        {
+                           const color = loadedImage.getPixelColor(paragraph.vertices.left,paragraph.vertices.top);
+                           const rgba = Jimp.intToRGBA(color);
+                           var matchedfont;
+                           if ((rgba.r + rgba.g + rgba.b)/3 > 125)
+                           {
+                              matchedfont = darkfont;
+                           }
+                           else
+                           {
+                              matchedfont = lightfont;
+                           }
+                           const ttext = res[1].data.translations[0].translatedText;
+                           const width = paragraph.vertices.right-paragraph.vertices.left;
+                           const height = paragraph.vertices.bottom-paragraph.vertices.top;
+                           const measureX = Jimp.measureText(matchedfont, ttext);
+                           const measureY = 43;
+                           const rect = new Jimp(measureX, measureY, color);
+                           rect.print(matchedfont, 0, 0, ttext, measureX,measureY);
+                           rect.resize(width,height);
+                           loadedImage.composite(rect, paragraph.vertices.left, paragraph.vertices.top);
+                        });
+                        tpromises[tpromiseIndex++] = tpromise;
+                     });
+                     Promise.allSettled(tpromises).then(value =>
+                     {
+                        loadedImage.getBufferAsync(Jimp.MIME_PNG).then(buffer =>
+                        {
+                           data.message.attachments.set(index,new discord.AttachmentBuilder(buffer));
+                           getUserColor(data,cb);
+                        });
+                     });
+                  })
+                  .catch(function (err)
+                  {
+                     console.error(err);
+                  });
+            }
+         });
+      }
    });
    return;
 };

@@ -144,7 +144,7 @@ module.exports = function(data)
       {
          data.message.author = reqChains[0].author;
          data.translate.original = reqChains[0].msgs.join("\n");
-         return translate(data);
+         return translate(data,botSend);
       }
 
       // -----------------------------------
@@ -152,6 +152,6 @@ module.exports = function(data)
       // -----------------------------------
 
       data.bufferChains = reqChains;
-      return translate(data);
+      return translate(data,botSend);
    }).catch(err => logger("error", err));
 };

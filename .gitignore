@@ -1,6 +1,7 @@
 node_modules
 build
 SQLlite
+gcp.key
 *.exe
 sqlite3.dll
 sqlite3.def

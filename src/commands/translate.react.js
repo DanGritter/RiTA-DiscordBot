@@ -3,6 +3,7 @@
 // -----------------
 
 // codebeat:disable[LOC,ABC,BLOCK_NESTING,ARITY]
+const botSend = require("../core/send");
 const langCheck = require("../core/lang.check");
 const translate = require("../core/translate");
 const fn = require("../core/helpers");
@@ -83,45 +84,35 @@ module.exports = function(data, user, client)
             // ------------------
             // Start translation
             // ------------------
-            translate(data);
+            translate(data,botSend);
          }
       );
    }
    else
-   if (data.message.author.bot)
    {
-      fn.getMessage(
-         client,
-         data.message.id,
-         data.message.channel.id,
-         user,
-         (message, err) =>
+      fn.getOriginalMessage(client,data,user, (origMessage, err) =>
+      {
+         if (err)
          {
-            let origMessage = message.content;
-            if (origMessage)
+            console.log(err);
+         }
+         else
+         {
+            let emoji = null;
+            if (data.emoji.id)
             {
-               const indexoflink = origMessage.lastIndexOf("(^)");
-               origMessage = origMessage.substring(indexoflink);
-               let indexofchannel = origMessage.indexOf("channels/")+9;
-               indexofchannel = origMessage.indexOf("/",indexofchannel)+1;
-               const indexoflinkend = origMessage.lastIndexOf(")");
-               const indexofmessage = origMessage.lastIndexOf("/");
-               const messageId = origMessage.substring(indexofmessage+1,indexoflinkend);
-               const channelId = origMessage.substring(indexofchannel,indexofmessage);
-               fn.getMessage(
-                  client,
-                  messageId,
-                  channelId,
-                  user,
-                  (origMessage, err) =>
-                  {
-			  if (err) {
-				  console.log(err);
-			  } else {
-                              origMessage.react(data.emoji.name);
-			  }
-                  });
+               emoji = origMessage.guild.emojis.fetch(data.emoji.id).then(guildemoji =>
+               {
+                  origMessage.react(guildemoji);
+               }
+               );
             }
-         });
+            else
+            {
+               emoji = data.emoji;
+               origMessage.react(emoji);
+            }
+         }
+      });
    }
 };

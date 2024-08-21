@@ -201,3 +201,35 @@ exports.getMessage = function(client, messageID, channelID, userID, cb)
       });
    });
 };
+
+exports.getOriginalMessage = function(client,data,user,cb)
+{
+   if (data.message.author.bot)
+   {
+      module.exports.getMessage(
+         client,
+         data.message.id,
+         data.message.channel.id,
+         user,
+         (message, err) =>
+         {
+            let origMessage = message.content;
+            if (origMessage)
+            {
+               const indexoflink = origMessage.lastIndexOf("(^)");
+               origMessage = origMessage.substring(indexoflink);
+               let indexofchannel = origMessage.indexOf("channels/")+9;
+               indexofchannel = origMessage.indexOf("/",indexofchannel)+1;
+               const indexoflinkend = origMessage.lastIndexOf(")");
+               const indexofmessage = origMessage.lastIndexOf("/");
+               const messageId = origMessage.substring(indexofmessage+1,indexoflinkend);
+               const channelId = origMessage.substring(indexofchannel,indexofmessage);
+               module.exports.getMessage(
+                  client,
+                  messageId,
+                  channelId,
+                  user, cb);
+            }
+         });
+   }
+};
