@@ -92,7 +92,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
             {
                if (member.id !== message.guild.ownerId)
                {
-                  events.nickname(member, false);
+                  events.nickname(member);
                }
             });
          });

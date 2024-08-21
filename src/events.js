@@ -25,7 +25,7 @@ const botCreator = "Collaboration";
 // Core Code
 // ----------
 
-async function updateNickname(stalemember,real)
+async function updateNickname(stalemember)
 {
    if (stalemember.guild)
    {
@@ -54,17 +54,9 @@ async function updateNickname(stalemember,real)
             }
             return true;
          });
-         if (real)
-         {
-            if (user_alliance && user_rank)
-            {
-               member.setNickname("["+user_alliance + " " + user_rank+"]"+nickname);
-            }
-         }
-         else
          if (user_alliance && user_rank)
          {
-            console.log("["+user_alliance + " " + user_rank+"]"+nickname);
+            member.setNickname("["+user_alliance + " " + user_rank+"]"+nickname);
          }
       }
    }
