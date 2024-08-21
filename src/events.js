@@ -331,16 +331,16 @@ exports.listen = function(client)
    {
       setTimeout(function ()
       {
-         const channel = guildmember.guild.channels.cache.get("1271530367794548739");
+         const channel = guildmember.guild.channels.cache.get(auth.welcomeChannel);
          channel.send(stripIndent`
+                    добро пожаловать ${guildmember.guild}
+                    Пожалуйста, перейдите по ссылке <#${auth.setupChannel}>, чтобы настроить языки и альянс!
+
                     Welcome to ${guildmember.guild} ${guildmember}!
-                    Please go to <#1272664168750911520> to setup languages and alliance!
+                    Please go to <#${auth.setupChannel}> to setup languages and alliance!
 
                     Willkommen bei ${guildmember.guild}
-                    Bitte gehen Sie zu <#1272664168750911520>, um Sprachen und Allianzen einzurichten!  
-
-                    добро пожаловать ${guildmember.guild}
-                    Пожалуйста, перейдите по ссылке <#1272664168750911520>, чтобы настроить языки и альянс!`);
+                    Bitte gehen Sie zu <#${auth.setupChannel}>, um Sprachen und Allianzen einzurichten!`);
       }, 3000);
    });
 

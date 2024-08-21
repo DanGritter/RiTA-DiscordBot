@@ -79,6 +79,35 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
    {
       return ParseArgs(data);
    }
+   if (
+      message.content.startsWith("!welcome")
+   )
+   {
+      if (message.isAdmin)
+      {
+         const guildmember = message.member;
+         setTimeout(function ()
+         {
+            const channel = guildmember.guild.channels.cache.get(auth.welcomeChannel);
+            channel.send(stripIndent`
+                    ${guildmember}
+                    добро пожаловать ${guildmember.guild}!
+                    Пожалуйста, нажмите здесь <#${auth.setupChannel}> чтобы установить языки, альянс и ранг!
+
+                    Welcome to ${guildmember.guild}!
+                    Please tap <#${auth.setupChannel}> to setup languages and alliance!
+
+                    Willkommen bei ${guildmember.guild}!
+                    Bitte tippen Sie hier <#${auth.setupChannel}> an, um Sprachen, Allianz und Rang einzurichten`);
+         }, 3000);
+      }
+      else
+      {
+         message.reply({content: `Not allowed to do welcome`,
+            ephemeral: true});
+      }
+      return;
+   }
 
    if (
       message.content.startsWith("!nickname")
@@ -181,17 +210,17 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       });
       channel.send({
          content: stripIndent`
-                             Which alliance are you in?  
-                             In welcher Allianz bist du?  
-                             В каком альянсе вы состоите?`,
-         components: [btnrow]
-      });
-      channel.send({
-         content: stripIndent`
                             Which language do you speak? 
                             Welche Sprache sprechen Sie? 
                             На каком языке вы говорите?`,
          components: [btnrow2]
+      });
+      channel.send({
+         content: stripIndent`
+                             Which alliance are you in?  
+                             In welcher Allianz bist du?  
+                             В каком альянсе вы состоите?`,
+         components: [btnrow]
       });
       channel.send({
          content: stripIndent`
