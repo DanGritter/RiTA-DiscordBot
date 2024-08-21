@@ -25,6 +25,39 @@ const botCreator = "Collaboration";
 // Core Code
 // ----------
 
+async function updateNickname(stalemember)
+{
+   const member = await stalemember.guild.members.fetch({ user: stalemember.id,
+      force: true });
+   var nickname = member.displayName;
+   if (nickname)
+   {
+      nickname = member.displayName;
+      const regex = /\[.*\].*/;
+      if (nickname.match(regex))
+      {
+         nickname = nickname.substring(nickname.indexOf("]") + 1);
+      }
+      var user_alliance = null;
+      var user_rank = null;
+      member.roles.cache.every(role =>
+      {
+         if (ranks.includes(role.name))
+         {
+            user_rank = role.name;
+         }
+         else if (alliances.includes(role.name))
+         {
+            user_alliance = role.name;
+         }
+         return true;
+      });
+
+      member.setNickname("["+user_alliance + " " + user_rank+"]"+nickname);
+   }
+}
+exports.nickname = updateNickname;
+
 exports.listen = function(client)
 {
    var config;
@@ -169,43 +202,6 @@ exports.listen = function(client)
    //{
    //   messageHandler(config, message, null, true);
    //});
-   async function updateNickname(stalemember)
-   {
-      const member = await stalemember.guild.members.fetch({ user: stalemember.id,
-         force: true });
-      var nickname = member.displayName;
-      if (nickname)
-      {
-         nickname = member.displayName;
-         const regex = /\[.*\].*/;
-         if (nickname.match(regex))
-         {
-            nickname = nickname.substring(nickname.indexOf("]") + 1);
-         }
-         var user_alliance = null;
-         var user_rank = null;
-         member.roles.cache.every(role =>
-         {
-            console.log("186 "+role.name);
-            if (ranks.includes(role.name))
-            {
-	       console.log("189: "+user_rank);
-               user_rank = role.name;
-	       console.log("191: "+user_rank);
-            }
-            else if (alliances.includes(role.name))
-            {
-	       console.log("195: "+user_alliance);
-               user_alliance = role.name;
-	       console.log("197: "+user_alliance);
-            }
-            return true;
-         });
-
-         console.log("201: "+"["+user_alliance + " " + user_rank+"]"+nickname);
-         member.setNickname("["+user_alliance + " " + user_rank+"]"+nickname);
-      }
-   }
    // -----------
    // Raw events
    // -----------

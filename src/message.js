@@ -6,6 +6,7 @@
 const db = require("./core/db");
 const fn = require("./core/helpers");
 const auth = require("./core/auth");
+const events = require("./events");
 const { ParseArgs } = require("./commands/args");
 const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle, PermissionsBitField, ChannelType } = require("discord.js");
 const stripIndent = require("common-tags").stripIndent;
@@ -79,6 +80,16 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       return ParseArgs(data);
    }
 
+   if (
+      message.content.startsWith("!nickname")
+   )
+   {
+      message.guild.members.cache.each(member=>
+      {
+         events.nickname(member);
+      });
+      return;
+   }
    if (
       message.content.startsWith(config.clearCmd)
    )
