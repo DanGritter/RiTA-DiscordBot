@@ -185,7 +185,7 @@ const sendTranslation = async function(data)
    if (data.proccess)
    {
       data.author = data.message.member;
-      if ( data.message.attachments && 
+      if (data.message.attachments &&
          data.message.attachments.size > 0
       )
       {
@@ -250,6 +250,9 @@ const sendTranslation = async function(data)
                const attachment = data.message.attachments.get(index);
                attachment.annotations = paragraphs;
                data.message.attachments.set(index,attachment);
+            }).catch(err =>
+            {
+               console.log(err);
             });
             promises[promiseIndex++] = promise;
          });
