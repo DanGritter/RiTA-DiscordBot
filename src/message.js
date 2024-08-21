@@ -84,10 +84,19 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       message.content.startsWith("!nickname")
    )
    {
+            if (message.isAdmin)
+            {
       message.guild.members.cache.each(member=>
       {
          events.nickname(member);
       });
+         message.reply({content: `Nicknames updated`,
+            ephemeral: true});
+	    } else {
+         message.reply({content: `Not allowed to set nicknames`,
+            ephemeral: true});
+
+	    }
       return;
    }
    if (
