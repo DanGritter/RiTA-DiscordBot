@@ -27,42 +27,45 @@ const botCreator = "Collaboration";
 
 async function updateNickname(stalemember,real)
 {
-   const member = await stalemember.guild.members.fetch({ user: stalemember.id,
-      force: true });
-   var nickname = member.displayName;
-   if (nickname)
+   if (stalemember.guild)
    {
-      nickname = member.displayName;
-      const regex = /\[.*\].*/;
-      if (nickname.match(regex))
+      const member = await stalemember.guild.members.fetch({ user: stalemember.id,
+         force: true });
+      var nickname = member.displayName;
+      if (nickname)
       {
-         nickname = nickname.substring(nickname.indexOf("]") + 1);
-      }
-      var user_alliance = null;
-      var user_rank = null;
-      member.roles.cache.every(role =>
-      {
-         if (ranks.includes(role.name))
+         nickname = member.displayName;
+         const regex = /\[.*\].*/;
+         if (nickname.match(regex))
          {
-            user_rank = role.name;
+            nickname = nickname.substring(nickname.indexOf("]") + 1);
          }
-         else if (alliances.includes(role.name))
+         var user_alliance = null;
+         var user_rank = null;
+         member.roles.cache.every(role =>
          {
-            user_alliance = role.name;
+            if (ranks.includes(role.name))
+            {
+               user_rank = role.name;
+            }
+            else if (alliances.includes(role.name))
+            {
+               user_alliance = role.name;
+            }
+            return true;
+         });
+         if (real)
+         {
+            if (user_alliance && user_rank)
+            {
+               member.setNickname("["+user_alliance + " " + user_rank+"]"+nickname);
+            }
          }
-         return true;
-      });
-      if (real)
-      {
+         else
          if (user_alliance && user_rank)
          {
-            member.setNickname("["+user_alliance + " " + user_rank+"]"+nickname);
+            console.log("["+user_alliance + " " + user_rank+"]"+nickname);
          }
-      }
-      else
-      if (user_alliance && user_rank)
-      {
-         console.log("["+user_alliance + " " + user_rank+"]"+nickname);
       }
    }
 }
