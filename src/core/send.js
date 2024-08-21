@@ -387,7 +387,11 @@ const embedOff = function(data)
          let content = data.text;
          if (data.link)
          {
-		 content = content+` [:small_red_triangle:](${data.link})`;
+		 if (content) {
+		 content = content+` [(^)](${data.link})`;
+		 } else {
+                   content = `[(^)](${data.link})`;
+		 }
 	 }
          webhook.send({content: content,
             color: colors.get(data.color),
