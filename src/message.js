@@ -86,7 +86,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
    {
       if (message.isAdmin)
       {
-         message.guild.members.cache.each(member=>
+         message.guild.members.fetch().then(member=>
          {
             if (member.id !== message.guild.ownerId)
             {
