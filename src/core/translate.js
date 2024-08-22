@@ -135,6 +135,86 @@ const updateServerStats = function(message)
 // ----------------
 // Run translation
 // ----------------
+function processAttachments(data,opts,cb)
+{
+   if (data.attachments && data.attachments.size > 0)
+   {
+      const attachments = data.attachments;
+      data.attachments = [];
+      attachments.each(function(attachment,index)
+      {
+         if (attachment.annotations)
+         {
+            var loadedImage;
+            var lightfont;
+            var darkfont;
+            const promise = Jimp.read(attachment.url)
+               .then(function (image)
+               {
+                  loadedImage = image;
+                  return Jimp.loadFont("./fonts/ibmplexsansblack.fnt");
+               })
+               .then(function (font)
+               {
+                  darkfont = font;
+                  return Jimp.loadFont("./fonts/ibmplexsanswhite.fnt");
+               }).then(function (font)
+               {
+                  lightfont = font;
+                  var tpromises = [];
+                  var tpromiseIndex = 0;
+                  attachment.annotations.forEach(paragraph =>
+                  {
+                     const tpromise = translate.translate(paragraph.text,opts).then(res=>
+                     {
+                        const color = loadedImage.getPixelColor(paragraph.vertices.left,paragraph.vertices.top);
+                        const rgba = Jimp.intToRGBA(color);
+                        var matchedfont;
+                        if ((rgba.r + rgba.g + rgba.b)/3 > 125)
+                        {
+                           matchedfont = darkfont;
+                        }
+                        else
+                        {
+                           matchedfont = lightfont;
+                        }
+                        const ttext = res[1].data.translations[0].translatedText;
+                        const width = paragraph.vertices.right-paragraph.vertices.left;
+                        const height = paragraph.vertices.bottom-paragraph.vertices.top;
+                        const measureX = Jimp.measureText(matchedfont, ttext);
+                        const measureY = 43;
+                        const rect = new Jimp(measureX, measureY, color);
+                        rect.print(matchedfont, 0, 0, ttext, measureX,measureY);
+                        rect.resize(width,height);
+                        loadedImage.composite(rect, paragraph.vertices.left, paragraph.vertices.top);
+                     });
+                     tpromises[tpromiseIndex++] = tpromise;
+                  });
+                  Promise.allSettled(tpromises).then(value =>
+                  {
+                     loadedImage.getBufferAsync(Jimp.MIME_PNG).then(buffer =>
+                     {
+                        data.attachments.push(new discord.AttachmentBuilder(buffer));
+                        getUserColor(data,cb);
+                     });
+                  });
+               })
+               .catch(function (err)
+               {
+                  console.error(err);
+               });
+         }
+         else
+         {
+            data.attachments.push(attachment);
+         }
+      });
+   }
+   else
+   {
+      getUserColor(data,cb);
+   }
+}
 
 module.exports = function(data,cb) //eslint-disable-line complexity
 {
@@ -294,89 +374,26 @@ module.exports = function(data,cb) //eslint-disable-line complexity
 
    const fw = data.forward;
    const ft = data.footer;
-
+   const tdata = { ...data};
    // --------------------
    // Split long messages
    // --------------------
-   translate.translate(data.translate.original, opts).then(res =>
+   if (tdata.translate.original.length > 0)
    {
-      updateServerStats(data.message);
-      data.forward = fw;
-      data.footer = ft;
-      data.color = data.author.displayHexColor;
-      data.text = translateFix(res[1].data.translations[0].translatedText);
-      data.showAuthor = true;
-      if (data.message.attachments && data.message.attachments.size > 0)
+      translate.translate(tdata.translate.original, opts).then(res =>
       {
-         data.message.attachments.each(function(attachment,index)
-         {
-            if (attachment.annotations)
-            {
-               var loadedImage;
-               var lightfont;
-               var darkfont;
-               const promise = Jimp.read(attachment.url)
-                  .then(function (image)
-                  {
-                     loadedImage = image;
-                     return Jimp.loadFont("./fonts/ibmplexsansblack.fnt");
-                  })
-                  .then(function (font)
-                  {
-                     darkfont = font;
-                     return Jimp.loadFont("./fonts/ibmplexsanswhite.fnt");
-                  }).then(function (font)
-                  {
-                     lightfont = font;
-                     var tpromises = [];
-                     var tpromiseIndex = 0;
-                     attachment.annotations.forEach(paragraph =>
-                     {
-                        const tpromise = translate.translate(paragraph.text,opts).then(res=>
-                        {
-                           const color = loadedImage.getPixelColor(paragraph.vertices.left,paragraph.vertices.top);
-                           const rgba = Jimp.intToRGBA(color);
-                           var matchedfont;
-                           if ((rgba.r + rgba.g + rgba.b)/3 > 125)
-                           {
-                              matchedfont = darkfont;
-                           }
-                           else
-                           {
-                              matchedfont = lightfont;
-                           }
-                           const ttext = res[1].data.translations[0].translatedText;
-                           const width = paragraph.vertices.right-paragraph.vertices.left;
-                           const height = paragraph.vertices.bottom-paragraph.vertices.top;
-                           const measureX = Jimp.measureText(matchedfont, ttext);
-                           const measureY = 43;
-                           const rect = new Jimp(measureX, measureY, color);
-                           rect.print(matchedfont, 0, 0, ttext, measureX,measureY);
-                           rect.resize(width,height);
-                           loadedImage.composite(rect, paragraph.vertices.left, paragraph.vertices.top);
-                        });
-                        tpromises[tpromiseIndex++] = tpromise;
-                     });
-                     Promise.allSettled(tpromises).then(value =>
-                     {
-                        loadedImage.getBufferAsync(Jimp.MIME_PNG).then(buffer =>
-                        {
-                           data.message.attachments.set(index,new discord.AttachmentBuilder(buffer));
-                           getUserColor(data,cb);
-                        });
-                     });
-                  })
-                  .catch(function (err)
-                  {
-                     console.error(err);
-                  });
-            }
-         });
-      }
-      else
-      {
-         getUserColor(data,cb);
-      }
-   });
+         updateServerStats(tdata.message);
+         tdata.forward = fw;
+         tdata.footer = ft;
+         tdata.color = tdata.author.displayHexColor;
+         tdata.text = translateFix(res[1].data.translations[0].translatedText);
+         tdata.showAuthor = true;
+         processAttachments(tdata,opts,cb);
+      });
+   }
+   else
+   {
+      processAttachments(tdata,opts,cb);
+   }
    return;
 };

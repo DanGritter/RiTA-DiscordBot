@@ -42,7 +42,90 @@ module.exports = function(data)
       }
 
       data.proccess = true;
+      if (data.message.attachments &&
+         data.message.attachments.size > 0
+      )
+      {
+         const promises = [];
+         let promiseIndex = 0;
+         data.message.attachments.each(function(attachment,index)
+         {
+            const promise = visionClient.textDetection(attachment.url).then(result =>
+            {
+               const detections = result[0].textAnnotations;
+               const paragraphs = [];
+               paragraphs[0] = {};
+               let paragraph_index = 0;
+               let left_p = 0;
+               let top_p = 0;
+               let right_p = 0;
+               let bottom_p = 0;
+               detections.slice(1).forEach(text =>
+               {
+                  const coords = text.boundingPoly.vertices;
+                  if (left_p === 0) {left_p = coords[0].x;}
+                  if (top_p === 0) {top_p = coords[0].y;}
+                  if (right_p === 0) {right_p = coords[2].x;}
+                  if (bottom_p === 0) {bottom_p = coords[2].y;}
 
+                  const left_c = coords[0].x;
+                  const top_c = coords[0].y;
+                  const right_c = coords[2].x;
+                  const bottom_c = coords[2].y;
+
+                  if (top_c >= top_p-2 && bottom_c <= bottom_p+2)
+                  {
+                     if (paragraphs[paragraph_index].text)
+                     {
+                        paragraphs[paragraph_index].text += " " + text.description;
+                     }
+                     else
+                     {
+                        paragraphs[paragraph_index].text = text.description;
+                     }
+                     right_p = right_c;
+                  }
+                  else
+                  {
+                     paragraphs[paragraph_index].vertices = {left: left_p,
+                        top: top_p,
+                        right: right_p,
+                        bottom: bottom_p};
+                     paragraph_index = paragraph_index + 1;
+                     paragraphs[paragraph_index] = {};
+                     left_p = coords[0].x;
+                     top_p = coords[0].y;
+                     right_p = coords[2].x;
+                     bottom_p = coords[2].y;
+                     paragraphs[paragraph_index].text = text.description;
+                  }
+               });
+               paragraphs[paragraph_index].vertices = {left: left_p,
+                  top: top_p,
+                  right: right_p,
+                  bottom: bottom_p};
+               const attachment = data.message.attachments.get(index);
+               attachment.annotations = paragraphs;
+               data.message.attachments.set(index,attachment);
+            }).catch(err =>
+            {
+               console.log(err);
+            });
+            promises[promiseIndex++] = promise;
+         });
+         Promise.allSettled(promises).then(value =>
+         {
+            data.showAuthor = true;
+            // -------------
+            // Send message
+            // -------------
+            for (var i = 0; i < data.rows.length; i++)
+            {
+               analyzeRows(data, i);
+            }
+         });
+         return;
+      }
       for (var i = 0; i < data.rows.length; i++)
       {
          analyzeRows(data, i);
@@ -57,7 +140,6 @@ module.exports = function(data)
 const analyzeRows = function(data, i)
 {
    const row = data.rows[i];
-
    // -------------------------------
    // Set forward channel for sender
    // -------------------------------
@@ -84,6 +166,12 @@ const analyzeRows = function(data, i)
             data.proccess = false;
          }
       }
+   }
+   else
+   {
+      delete data.forward;
+      data.embeds = data.message.embeds;
+      data.attachments = data.message.attachments;
    }
 
    // ------------------------
@@ -176,96 +264,12 @@ const startTranslation = function(data, i, row)
 // Proccess task
 // --------------
 
-const sendTranslation = async function(data)
+const sendTranslation = function(data)
 {
-// const bucketName = 'Bucket where the file resides, e.g. my-bucket';
-// const fileName = 'Path to file within bucket, e.g. path/to/image.png';
-
    // Performs text detection on the gcs file
    if (data.proccess)
    {
       data.author = data.message.member;
-      if (data.message.attachments &&
-         data.message.attachments.size > 0
-      )
-      {
-         const promises = [];
-         let promiseIndex = 0;
-         data.message.attachments.each(function(attachment,index)
-         {
-            const promise = visionClient.textDetection(attachment.url).then(result =>
-            {
-               const detections = result[0].textAnnotations;
-               const paragraphs = [];
-               paragraphs[0] = {};
-               let paragraph_index = 0;
-               let left_p = 0;
-               let top_p = 0;
-               let right_p = 0;
-               let bottom_p = 0;
-               detections.slice(1).forEach(text =>
-               {
-                  const coords = text.boundingPoly.vertices;
-                  if (left_p === 0) {left_p = coords[0].x;}
-                  if (top_p === 0) {top_p = coords[0].y;}
-                  if (right_p === 0) {right_p = coords[2].x;}
-                  if (bottom_p === 0) {bottom_p = coords[2].y;}
-
-                  const left_c = coords[0].x;
-                  const top_c = coords[0].y;
-                  const right_c = coords[2].x;
-                  const bottom_c = coords[2].y;
-
-                  if (top_c >= top_p-2 && bottom_c <= bottom_p+2)
-                  {
-                     if (paragraphs[paragraph_index].text)
-                     {
-                        paragraphs[paragraph_index].text += " " + text.description;
-                     }
-                     else
-                     {
-                        paragraphs[paragraph_index].text = text.description;
-                     }
-                     right_p = right_c;
-                  }
-                  else
-                  {
-                     paragraphs[paragraph_index].vertices = {left: left_p,
-                        top: top_p,
-                        right: right_p,
-                        bottom: bottom_p};
-                     paragraph_index = paragraph_index + 1;
-                     paragraphs[paragraph_index] = {};
-                     left_p = coords[0].x;
-                     top_p = coords[0].y;
-                     right_p = coords[2].x;
-                     bottom_p = coords[2].y;
-                     paragraphs[paragraph_index].text = text.description;
-                  }
-               });
-               paragraphs[paragraph_index].vertices = {left: left_p,
-                  top: top_p,
-                  right: right_p,
-                  bottom: bottom_p};
-               const attachment = data.message.attachments.get(index);
-               attachment.annotations = paragraphs;
-               data.message.attachments.set(index,attachment);
-            }).catch(err =>
-            {
-               console.log(err);
-            });
-            promises[promiseIndex++] = promise;
-         });
-         Promise.allSettled(promises).then(value =>
-         {
-            data.showAuthor = true;
-            // -------------
-            // Send message
-            // -------------
-            return translate(data,botSend);
-         });
-         return;
-      }
 
       // -------------
       // Send message

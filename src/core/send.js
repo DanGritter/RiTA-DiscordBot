@@ -303,7 +303,8 @@ const embedOn = function(data)
             }
             else
             {
-               data.channel.send(attachment);
+               const attachmentObj = attachment;
+               data.channel.send(attachmentObj);
             }
             return true;
          });
@@ -341,7 +342,8 @@ const embedOff = function(data)
          }
          else
          {
-            files.push(attachment);
+            const attachmentObj = attachment;
+            files.push(attachmentObj);
          }
          return true;
       });
@@ -516,7 +518,8 @@ const embedOff = function(data)
             }
             else
             {
-               data.channel.send({files: [attachment]});
+               const attachmentObj = attachment;
+               data.channel.send({files: [attachmentObj]});
             }
             return true;
          });
@@ -547,8 +550,8 @@ const checkPerms = function(data, sendBox)
          color: data.color,
          text: data.text,
          footer: data.footer,
-         embeds: data.message.embeds,
-         attachments: data.message.attachments,
+         embeds: data.embeds,
+         attachments: data.attachments,
          forward: data.forward,
          origin: null,
          reference: data.message.reference,
