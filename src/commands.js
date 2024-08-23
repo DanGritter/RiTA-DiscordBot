@@ -95,7 +95,77 @@ const commands = [
    // 3
    {
       name: "group",
-      description: "Create translation group"
+      description: "Create translation group",
+      options: [
+         {
+            name: "action",
+            "type": ApplicationCommandOptionType.SubcommandGroup,
+            description: "What type of group action",
+            options: [{
+               name: "add",
+               description: "add group or group item",
+               "type": ApplicationCommandOptionType.Subcommand,
+               options: [
+                  {
+                     "type": ApplicationCommandOptionType.String,
+                     name: "name",
+                     description: "group name",
+                     required: true
+                  },
+                  {
+                     choices: languages,
+                     "type": ApplicationCommandOptionType.String,
+                     name: "to",
+                     description: "language this channel uses",
+                     required: true
+                  },
+                  {
+                     "type": ApplicationCommandOptionType.Channel,
+                     name: "channel",
+                     description: "channel to add to group, will be created if it doesn't exist based on translation from group name",
+                     channel_types: [ChannelType.GuildText]
+                  }
+               ]
+            },
+            {
+               name: "remove",
+               description: "remove group or group item",
+               "type": ApplicationCommandOptionType.Subcommand,
+               options: [
+                  {
+                     "type": ApplicationCommandOptionType.String,
+                     name: "name",
+                     description: "group name",
+                     required: true
+                  },
+                  {
+                     "type": ApplicationCommandOptionType.Channel,
+                     name: "channel",
+                     description: "channel to remove to group",
+                     channel_types: [ChannelType.GuildText]
+                  },
+                  {
+                     "type": ApplicationCommandOptionType.String,
+                     name: "lang",
+                     description: "language to remove from group"
+                  }
+               ]
+            },
+            {
+               name: "list",
+               description: "list groups",
+               "type": ApplicationCommandOptionType.Subcommand,
+               options: [
+                  {
+                     "type": ApplicationCommandOptionType.String,
+                     name: "name",
+                     description: "group name",
+                     required: true
+                  }
+	     ]
+            }
+            ]
+         }]
    },
    // 4
    {

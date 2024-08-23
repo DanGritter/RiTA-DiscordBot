@@ -38,6 +38,7 @@
   "homepage": "https://ritabot.org",
   "bugs": "https://github.com/matheuss/Rita/issues",
   "dependencies": {
+    "@google-cloud/speech": "^6.7.0",
     "@google-cloud/translate": "^8.3.0",
     "@google-cloud/vision": "^4.3.1",
     "common-tags": "^1.8.0",

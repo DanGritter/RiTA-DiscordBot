@@ -139,6 +139,7 @@ const stripPrefix = function(message, config, bot)
 
    return cmd;
 };
+
 module.exports.ParseInteraction = function(data)
 {
    var output = {
@@ -152,6 +153,11 @@ module.exports.ParseInteraction = function(data)
       output.main = "auto";
    }
 
+   if (output.main === "group")
+   {
+      console.log("group");
+   }
+   else
    if (data.options.data.length > 0)
    {
       output.to = data.options.getString("to");

@@ -337,10 +337,11 @@ exports.listen = function(client)
       {
          const channel = guildmember.guild.channels.cache.get(auth.welcomeChannel);
          channel.send(stripIndent`
+                    ${guildmember}
                     добро пожаловать ${guildmember.guild}
                     Пожалуйста, перейдите по ссылке <#${auth.setupChannel}>, чтобы настроить языки и альянс!
 
-                    Welcome to ${guildmember.guild} ${guildmember}!
+                    Welcome to ${guildmember.guild}!
                     Please go to <#${auth.setupChannel}> to setup languages and alliance!
 
                     Willkommen bei ${guildmember.guild}

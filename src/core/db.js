@@ -84,6 +84,32 @@ const Servers = db.define("servers", {
 // Database tasks table definition
 // --------------------------------
 
+const Groups = db.define("groups", {
+   server: Sequelize.STRING(32),
+   name: Sequelize.STRING(32),
+   channel: Sequelize.STRING(32),
+   active: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: true
+   },
+   lang: {
+      type: Sequelize.STRING(8),
+      defaultValue: "en"
+   }
+},
+{
+   indexes: [
+      {
+         unique: false,
+         fields: ["channel", "name"]
+      }
+   ]
+});
+
+// --------------------------------
+// Database tasks table definition
+// --------------------------------
+
 const Tasks = db.define("tasks", {
    origin: Sequelize.STRING(32),
    dest: Sequelize.STRING(32),
@@ -119,6 +145,7 @@ exports.initializeDatabase = function()
 {
    Servers.sync({ logging: console.log });
    Tasks.sync({ logging: console.log });
+   Groups.sync({ logging: console.log });
    // Add global server row
    Servers.upsert({ id: "bot",
       lang: "en" });
@@ -294,6 +321,20 @@ exports.updateColumns = function(data)
 // ------------------
 // Get Channel Tasks
 // ------------------
+exports.groups = function(group)
+{
+   const taskList = Groups.findAll({ where: { group: group,
+      active: true }}).then(
+      function (result)
+      {
+         return result;
+      }).
+      catch(e =>
+      {
+         logger("error", e);
+         return null;
+      });
+};
 
 exports.channelTasks = function(data)
 {
@@ -413,8 +454,53 @@ exports.getServersCount = function(cb)
 };
 
 // ---------
-// Add Task
+// Add Group
 // ---------
+
+//   server: Sequelize.STRING(32),
+//   name: Sequelize.STRING(32),
+//   channel: Sequelize.STRING(32),
+//   active: {
+//      type: Sequelize.BOOLEAN,
+//      defaultValue: true
+//   },
+//   lang: {
+//      type: Sequelize.STRING(8),
+//      defaultValue: "en"
+//   },
+exports.remGroup = function(group)
+{
+   if (group.channel)
+   {
+      return Groups.destroy({ where: { [Op.and]: [{ name: group.name }, {server: group.server}, {channel: group.channel}]}});
+   }
+   return Groups.destroy({ where: { [Op.and]: [{ name: group.name }, {server: group.server}]}});
+};
+exports.addGroup = function(group)
+{
+   Groups.upsert({
+      name: group.name,
+      server: group.server,
+      channel: group.channel,
+      active: true,
+      lang: group.to
+   }).then(() =>
+   {
+      logger("dev", "group added successfully.");
+   })
+      .catch(err =>
+      {
+         logger("error", err);
+      });
+};
+exports.getGroups = function(guild, name, cb)
+{
+   return Groups.findAll({ where: { [Op.and]: [{name: name},{server: guild}] }}, {raw: true}).then(
+      function (result, err)
+      {
+         cb(err, result);
+      });
+};
 
 exports.addTask = function(task)
 {
