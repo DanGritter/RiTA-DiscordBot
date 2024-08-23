@@ -11,7 +11,7 @@ const { ParseArgs } = require("./commands/args");
 const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle, PermissionsBitField, ChannelType } = require("discord.js");
 const stripIndent = require("common-tags").stripIndent;
 
-const alliances = ["555", "DIF", "FNB", "KSM", "LoU", "OGs", "OPS", "PrO","TAR", "TDS", "TIR", "wlf", "WTF"];
+const alliances = ["555", "DIF", "FNB", "KSM", "LoU", "OGs", "OPG", "OPS", "PrO","TAR", "TDS", "TIR", "wlf", "WTF"];
 
 const languages = ["English", "Russian", "German"];
 
