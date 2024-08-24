@@ -312,7 +312,7 @@ exports.speechDetection = function(audio,lang,cb)
 {
    const spromise = new Promise((resolve,reject)=>
    {
-      console.log(`Input: audio`);
+      console.log(`Input: `+audio);
       http.get(audio, function(res)
       {
          var waveform = [];
