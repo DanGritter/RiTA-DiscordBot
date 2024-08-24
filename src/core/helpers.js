@@ -12,6 +12,7 @@ const speech = require("@google-cloud/speech").v1;
 
 const projectId = "mindful-marking-432022-g6";
 const client = new speech.SpeechClient();
+const { languages,langMap} = require("../message");
 
 
 // Creates a client
@@ -362,7 +363,45 @@ exports.processAttachments = function(data,cb)
       let promiseIndex = 0;
       data.message.attachments.each(function(attachment,index)
       {
-         if (!attachment.waveform)
+         if (attachment.waveform)
+         {
+            const member = data.message.member;
+            if (member) {
+               let spokenlanguage = null;
+               for (const language of languages)
+               {
+                  var lrole = member.roles.cache.find(r => r.name === language);
+                  if (lrole)
+                  {
+                     spokenlanguage = lrole.name;
+                  }
+               }
+
+               const promise = new Promise((resolve,reject) =>
+               {
+                  if (langMap[spokenlanguage])
+                  {
+                     module.exports.speechDetection(attachment.url,langMap[spokenlanguage],(paragraphs,err) =>
+                     {
+                        if (err)
+                        {
+                           console.log(err);
+                           return reject();
+                        }
+                        const attachment = data.message.attachments.get(index);
+                        attachment.annotations = paragraphs;
+                        data.message.attachments.set(index,attachment);
+                     });
+                  }
+                  else
+                  {
+                     data.message.reply("unable to transcribe");
+                     return resolve();
+                  }
+               });
+	    }
+         }
+         else
          {
             const promise = module.exports.textDetection(attachment.url,(paragraphs,err) =>
             {

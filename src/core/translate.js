@@ -133,9 +133,6 @@ const updateServerStats = function(message)
 };
 
 
-const language_map = {en: "en-US",
-   ru: "ru-RU",
-   de: "de-DE"};
 // ----------------
 // Run translation
 // ----------------
@@ -151,39 +148,25 @@ function processAttachments(data,opts,cb)
       {
          if (attachment.waveform)
          {
-            const promise = new Promise((resolve,reject) =>
+            if (attachment.annotations)
             {
-               if (language_map[opts.from])
+               const promise = new Promise((resolve,reject) =>
                {
-                  fn.speechDetection(attachment.url,language_map[opts.from],(paragraphs,err) =>
+                  translate.translate(attachment.annotations,opts).then(res=>
                   {
-                     if (err)
+                     if (data.text)
                      {
-      	     console.log(err);
-                        return reject();
+                        data.text += "\n" + res[1].data.translations[0].translatedText;
                      }
-                     data.message.reply(paragraphs);
-                     translate.translate(paragraphs,opts).then(res=>
+                     else
                      {
-                        if (data.text)
-                        {
-                           data.text += "\n" + res[1].data.translations[0].translatedText;
-                        }
-                        else
-                        {
-                           data.text = res[1].data.translations[0].translatedText;
-                        }
-                        return resolve();
-                     });
+                        data.text = res[1].data.translations[0].translatedText;
+                     }
+                     return resolve();
                   });
-               }
-               else
-               {
-                  data.message.reply("unable to transcribe");
-                  return resolve();
-               }
-            });
-            promises[promiseIndex++] = promise;
+               });
+               promises[promiseIndex++] = promise;
+            }
          }
          else
          if (attachment.annotations)

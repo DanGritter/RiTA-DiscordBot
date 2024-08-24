@@ -15,12 +15,17 @@ const alliances = ["555", "DIF", "FNB", "KSM", "LoU", "OGs", "OPG", "OPS", "PrO"
 
 const languages = ["English", "Russian", "German"];
 
+const langMap = {"English": "en-US",
+   "Russian": "ru-RU",
+   "German": "de-DE"};
+
 const language_labels = ["English", "Русский", "Deutsch"];
 
 const ranks = ["R5", "R4", "R3", "R2", "R1"];
 
 module.exports.alliances = alliances;
 module.exports.languages = languages;
+module.exports.langMap = langMap;
 module.exports.ranks = ranks;
 module.exports.language_labels = language_labels;
 // --------------------
