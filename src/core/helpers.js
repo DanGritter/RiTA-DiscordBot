@@ -377,21 +377,6 @@ exports.processAttachments = function(data,cb)
             });
             promises[promiseIndex++] = promise;
          }
-         else
-         {
-            const promise = module.exports.speechDetection(attachment.url,"en-US",(paragraphs,err) =>
-            {
-               if (err)
-               {
-                  console.log(err);
-                  return;
-               }
-               const attachment = data.message.attachments.get(index);
-               attachment.transcription = paragraphs;
-               data.message.attachments.set(index,attachment);
-            });
-            promises[promiseIndex++] = promise;
-         }
       });
       Promise.allSettled(promises).then(value =>
       {

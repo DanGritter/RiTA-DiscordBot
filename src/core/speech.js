@@ -14,9 +14,11 @@ async function transcribeFile()
    const audio = {
       content: fs.readFileSync(filename).toString("base64")
    };
-   http.get("https://cdn.discordapp.com/attachments/1273268746542383115/1276645983169548328/voice-message.ogg?ex=66ca48b9&is=66c8f739&hm=5f283c1e1896565392f845c6760fca5e413fafa6e73cff65cbe33f80f9763965&", function(res)
+   //   const russian = "https://cdn.discordapp.com/attachments/1271618475064033330/1276697301368307783/voice-message.ogg?ex=66ca7884&is=66c92704&hm=40046de992a6cc70641aa139c2fbe21acd5962a64c3f7d23ae9e47b6be5ccefc&";
+   const english = "https://cdn.discordapp.com/attachments/1273268746542383115/1276645983169548328/voice-message.ogg?ex=66ca48b9&is=66c8f739&hm=5f283c1e1896565392f845c6760fca5e413fafa6e73cff65cbe33f80f9763965&";
+   const russian = "https://cdn.discordapp.com/attachments/1271618475064033330/1276699635557204039/voice-message.ogg?ex=66ca7ab1&is=66c92931&hm=2ccea750aee8e48e9115f6b802af9c60f2b9f1b633662a7f800c956681954b14&";
+   http.get(russian, function(res)
    {
-      const result = new Promise();
       var waveform = [];
       res.on("data", function(chunk)
       {
@@ -33,7 +35,7 @@ async function transcribeFile()
                encoding: "OGG_OPUS",
                sampleRateHertz: 48000,
                //            audioChannelCount: 2,
-               languageCode: "en-US"
+               languageCode: "ru"
             }
          };
          const transcriptionRequest = {

@@ -132,6 +132,10 @@ const updateServerStats = function(message)
    db.increaseServers(id);
 };
 
+
+const language_map = {en: "en-US",
+   ru: "ru-RU",
+   de: "de-DE"};
 // ----------------
 // Run translation
 // ----------------
@@ -147,21 +151,30 @@ function processAttachments(data,opts,cb)
       {
          if (attachment.waveform)
          {
-            if (attachment.transcription)
+            const promise = new Promise((resolve,reject) =>
             {
-               const spromise = translate.translate(attachment.transcription,opts).then(res=>
+               fn.speechDetection(attachment.url,language_map[opts.from],(paragraphs,err) =>
                {
-                  if (data.text)
+                  if (err)
                   {
-                     data.text += "\n" + res[1].data.translations[0].translatedText;
-                  }
-                  else
+		       console.log(err);
+                     return reject();
+	       }
+                  translate.translate(paragraphs,opts).then(res=>
                   {
-                     data.text = res[1].data.translations[0].translatedText;
-                  }
+                     if (data.text)
+                     {
+                        data.text += "\n" + res[1].data.translations[0].translatedText;
+                     }
+                     else
+                     {
+                        data.text = res[1].data.translations[0].translatedText;
+                     }
+                     return resolve();
+                  });
                });
-               promises[promiseIndex++] = spromise;
-            }
+	    });
+            promises[promiseIndex++] = promise;
          }
          else
          if (attachment.annotations)
