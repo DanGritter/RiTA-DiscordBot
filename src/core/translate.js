@@ -153,27 +153,36 @@ function processAttachments(data,opts,cb)
          {
             const promise = new Promise((resolve,reject) =>
             {
-               fn.speechDetection(attachment.url,language_map[opts.from],(paragraphs,err) =>
+               if (language_map[opts.from])
                {
-                  if (err)
+                  fn.speechDetection(attachment.url,language_map[opts.from],(paragraphs,err) =>
                   {
-		       console.log(err);
-                     return reject();
-	       }
-                  translate.translate(paragraphs,opts).then(res=>
-                  {
-                     if (data.text)
+                     if (err)
                      {
-                        data.text += "\n" + res[1].data.translations[0].translatedText;
+      	     console.log(err);
+                        return reject();
                      }
-                     else
+                     data.message.reply(paragraphs);
+                     translate.translate(paragraphs,opts).then(res=>
                      {
-                        data.text = res[1].data.translations[0].translatedText;
-                     }
-                     return resolve();
+                        if (data.text)
+                        {
+                           data.text += "\n" + res[1].data.translations[0].translatedText;
+                        }
+                        else
+                        {
+                           data.text = res[1].data.translations[0].translatedText;
+                        }
+                        return resolve();
+                     });
                   });
-               });
-	    });
+               }
+               else
+               {
+                  data.message.reply("unable to transcribe");
+                  return resolve();
+               }
+            });
             promises[promiseIndex++] = promise;
          }
          else
