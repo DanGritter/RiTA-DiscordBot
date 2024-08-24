@@ -162,7 +162,7 @@ const commands = [
                      description: "group name",
                      required: true
                   }
-	     ]
+               ]
             }
             ]
          }]

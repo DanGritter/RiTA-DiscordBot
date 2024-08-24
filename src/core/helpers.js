@@ -4,6 +4,18 @@
 
 // codebeat:disable[LOC,ABC,BLOCK_NESTING,ARITY]
 const logger = require("./logger");
+const auth = require("./auth");
+var http = require("https");
+// Imports the Google Cloud client libraries
+const vision = require("@google-cloud/vision");
+const speech = require("@google-cloud/speech").v1;
+
+const projectId = "mindful-marking-432022-g6";
+const client = new speech.SpeechClient();
+
+
+// Creates a client
+const visionClient = new vision.ImageAnnotatorClient({key: auth.gcpapikey});
 
 // --------------------------------------
 // Helper Functions & Buffer end checker
@@ -232,4 +244,161 @@ exports.getOriginalMessage = function(client,data,user,cb)
             }
          });
    }
+};
+exports.textDetection = function (url,cb)
+{
+   return visionClient.textDetection(url).then(result =>
+   {
+      const detections = result[0].textAnnotations;
+      const paragraphs = [];
+      paragraphs[0] = {};
+      let paragraph_index = 0;
+      let left_p = 0;
+      let top_p = 0;
+      let right_p = 0;
+      let bottom_p = 0;
+      detections.slice(1).forEach(text =>
+      {
+         const coords = text.boundingPoly.vertices;
+         if (left_p === 0) {left_p = coords[0].x;}
+         if (top_p === 0) {top_p = coords[0].y;}
+         if (right_p === 0) {right_p = coords[2].x;}
+         if (bottom_p === 0) {bottom_p = coords[2].y;}
+
+         const left_c = coords[0].x;
+         const top_c = coords[0].y;
+         const right_c = coords[2].x;
+         const bottom_c = coords[2].y;
+
+         if (top_c >= top_p-2 && bottom_c <= bottom_p+2)
+         {
+            if (paragraphs[paragraph_index].text)
+            {
+               paragraphs[paragraph_index].text += " " + text.description;
+            }
+            else
+            {
+               paragraphs[paragraph_index].text = text.description;
+            }
+            right_p = right_c;
+         }
+         else
+         {
+            paragraphs[paragraph_index].vertices = {left: left_p,
+               top: top_p,
+               right: right_p,
+               bottom: bottom_p};
+            paragraph_index = paragraph_index + 1;
+            paragraphs[paragraph_index] = {};
+            left_p = coords[0].x;
+            top_p = coords[0].y;
+            right_p = coords[2].x;
+            bottom_p = coords[2].y;
+            paragraphs[paragraph_index].text = text.description;
+         }
+      });
+      paragraphs[paragraph_index].vertices = {left: left_p,
+         top: top_p,
+         right: right_p,
+         bottom: bottom_p};
+      cb(paragraphs);
+   }).catch(err =>
+   {
+      cb(null,err);
+   });
+};
+
+exports.speechDetection = function(audio,lang,cb)
+{
+   const spromise = new Promise((resolve,reject)=>
+   {
+      console.log(`Input: audio`);
+      http.get(audio, function(res)
+      {
+         var waveform = [];
+         res.on("data", function(chunk)
+         {
+            waveform.push(chunk);
+         }).on("end", function()
+         {
+            var buffer = Buffer.concat(waveform);
+            const transcriptionRequest = {
+               audio: { content: buffer.toString("base64")},
+               config: {
+                  encoding: "OGG_OPUS",
+                  sampleRateHertz: 48000,
+                  languageCode: lang
+               }
+            };
+            client.recognize(transcriptionRequest).then(response =>
+            {
+               if (response[0].results.length > 0)
+               {
+                  const result = response[0].results[0];
+                  console.log(`Transcript: ${result.alternatives[0].transcript}`);
+                  cb(result.alternatives[0].transcript);
+                  return resolve();
+               }
+               cb(null);
+               return resolve();
+            }).catch(err =>
+            {
+               cb(null,err);
+               return reject();
+            });
+         });
+      });
+   });
+   return spromise;
+};
+
+exports.processAttachments = function(data,cb)
+{
+   if (data.message.attachments &&
+         data.message.attachments.size > 0
+   )
+   {
+      const promises = [];
+      let promiseIndex = 0;
+      data.message.attachments.each(function(attachment,index)
+      {
+         if (!attachment.waveform)
+         {
+            const promise = module.exports.textDetection(attachment.url,(paragraphs,err) =>
+            {
+               if (err)
+               {
+                  console.log(err);
+                  return;
+               }
+               const attachment = data.message.attachments.get(index);
+               attachment.annotations = paragraphs;
+               data.message.attachments.set(index,attachment);
+            });
+            promises[promiseIndex++] = promise;
+         }
+         else
+         {
+            const promise = module.exports.speechDetection(attachment.url,"en-US",(paragraphs,err) =>
+            {
+               if (err)
+               {
+                  console.log(err);
+                  return;
+               }
+               const attachment = data.message.attachments.get(index);
+               attachment.transcription = paragraphs;
+               data.message.attachments.set(index,attachment);
+            });
+            promises[promiseIndex++] = promise;
+         }
+      });
+      Promise.allSettled(promises).then(value =>
+      {
+         cb(data);
+      });
+      return;
+   }
+
+   cb(data);
 };

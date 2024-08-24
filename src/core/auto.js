@@ -8,11 +8,6 @@ const logger = require("./logger");
 const botSend = require("./send");
 const fn = require("./helpers");
 const auth = require("./auth");
-// Imports the Google Cloud client libraries
-const vision = require("@google-cloud/vision");
-
-// Creates a client
-const visionClient = new vision.ImageAnnotatorClient({key: auth.gcpapikey});
 
 // -----------------
 // Get data from db
@@ -42,94 +37,13 @@ module.exports = function(data)
       }
 
       data.proccess = true;
-      if (data.message.attachments &&
-         data.message.attachments.size > 0
-      )
+      fn.processAttachments(data, cbdata =>
       {
-         const promises = [];
-         let promiseIndex = 0;
-         data.message.attachments.each(function(attachment,index)
+         for (var i = 0; i < cbdata.rows.length; i++)
          {
-            const promise = visionClient.textDetection(attachment.url).then(result =>
-            {
-               const detections = result[0].textAnnotations;
-               const paragraphs = [];
-               paragraphs[0] = {};
-               let paragraph_index = 0;
-               let left_p = 0;
-               let top_p = 0;
-               let right_p = 0;
-               let bottom_p = 0;
-               detections.slice(1).forEach(text =>
-               {
-                  const coords = text.boundingPoly.vertices;
-                  if (left_p === 0) {left_p = coords[0].x;}
-                  if (top_p === 0) {top_p = coords[0].y;}
-                  if (right_p === 0) {right_p = coords[2].x;}
-                  if (bottom_p === 0) {bottom_p = coords[2].y;}
-
-                  const left_c = coords[0].x;
-                  const top_c = coords[0].y;
-                  const right_c = coords[2].x;
-                  const bottom_c = coords[2].y;
-
-                  if (top_c >= top_p-2 && bottom_c <= bottom_p+2)
-                  {
-                     if (paragraphs[paragraph_index].text)
-                     {
-                        paragraphs[paragraph_index].text += " " + text.description;
-                     }
-                     else
-                     {
-                        paragraphs[paragraph_index].text = text.description;
-                     }
-                     right_p = right_c;
-                  }
-                  else
-                  {
-                     paragraphs[paragraph_index].vertices = {left: left_p,
-                        top: top_p,
-                        right: right_p,
-                        bottom: bottom_p};
-                     paragraph_index = paragraph_index + 1;
-                     paragraphs[paragraph_index] = {};
-                     left_p = coords[0].x;
-                     top_p = coords[0].y;
-                     right_p = coords[2].x;
-                     bottom_p = coords[2].y;
-                     paragraphs[paragraph_index].text = text.description;
-                  }
-               });
-               paragraphs[paragraph_index].vertices = {left: left_p,
-                  top: top_p,
-                  right: right_p,
-                  bottom: bottom_p};
-               const attachment = data.message.attachments.get(index);
-               attachment.annotations = paragraphs;
-               data.message.attachments.set(index,attachment);
-            }).catch(err =>
-            {
-               console.log(err);
-            });
-            promises[promiseIndex++] = promise;
-         });
-         Promise.allSettled(promises).then(value =>
-         {
-            data.showAuthor = true;
-            // -------------
-            // Send message
-            // -------------
-            for (var i = 0; i < data.rows.length; i++)
-            {
-               analyzeRows(data, i);
-            }
-         });
-         return;
-      }
-      for (var i = 0; i < data.rows.length; i++)
-      {
-         analyzeRows(data, i);
-      }
+            analyzeRows(cbdata, i);
+         }
+      });
    }
 };
 

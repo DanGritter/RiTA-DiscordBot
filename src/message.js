@@ -110,6 +110,14 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       }
       return;
    }
+   if (
+      message.content.startsWith("!speech")
+   )
+   {
+      const channel = message.channel;
+      const guildmember = message.member;
+      return;
+   }
 
    if (
       message.content.startsWith("!nickname")

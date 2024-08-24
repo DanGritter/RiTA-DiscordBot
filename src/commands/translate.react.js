@@ -80,11 +80,14 @@ module.exports = function(data, user, client)
             data.message.roleColor = fn.getRoleColor(message.member);
             data.canWrite = true;
             data.bot = client.user;
-
+            fn.processAttachments(data, cbdata =>
+            {
             // ------------------
             // Start translation
             // ------------------
-            translate(data,botSend);
+               data.attachments = data.message.attachments;
+               translate(data,botSend);
+            });
          }
       );
    }
