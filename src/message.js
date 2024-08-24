@@ -13,13 +13,13 @@ const stripIndent = require("common-tags").stripIndent;
 
 const alliances = ["555", "DIF", "FNB", "KSM", "LoU", "OGs", "OPG", "OPS", "PrO","TAR", "TDS", "TIR", "wlf", "WTF"];
 
-const languages = ["English", "Russian", "German"];
+const languages = ["English", "Russian", "German", "Spanish", "Japanese"];
 
 const langMap = {"English": "en-US",
    "Russian": "ru-RU",
    "German": "de-DE"};
 
-const language_labels = ["English", "Русский", "Deutsch"];
+const language_labels = ["English", "Русский", "Deutsch", "Español", "日本語" ];
 
 const ranks = ["R5", "R4", "R3", "R2", "R1"];
 
@@ -87,44 +87,6 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       return ParseArgs(data);
    }
    if (
-      message.content.startsWith("!welcome")
-   )
-   {
-      if (message.isAdmin)
-      {
-         const guildmember = message.member;
-         setTimeout(function ()
-         {
-            const channel = guildmember.guild.channels.cache.get(auth.welcomeChannel);
-            channel.send(stripIndent`
-                    ${guildmember}
-                    добро пожаловать ${guildmember.guild}!
-                    Пожалуйста, нажмите здесь <#${auth.setupChannel}> чтобы установить языки, альянс и ранг!
-
-                    Welcome to ${guildmember.guild}!
-                    Please tap <#${auth.setupChannel}> to setup languages and alliance!
-
-                    Willkommen bei ${guildmember.guild}!
-                    Bitte tippen Sie hier <#${auth.setupChannel}> an, um Sprachen, Allianz und Rang einzurichten`);
-         }, 3000);
-      }
-      else
-      {
-         message.reply({content: `Not allowed to do welcome`,
-            ephemeral: true});
-      }
-      return;
-   }
-   if (
-      message.content.startsWith("!speech")
-   )
-   {
-      const channel = message.channel;
-      const guildmember = message.member;
-      return;
-   }
-
-   if (
       message.content.startsWith("!nickname")
    )
    {
@@ -182,24 +144,42 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       const alliance_options = [];
       const language_options = [];
       const rank_options = [];
+      const rolesToAdd = [];
       for (var e of alliances)
       {
          alliance_options.push(new StringSelectMenuOptionBuilder()
             .setLabel(e)
             .setValue(e));
+         rolesToAdd.push(e);
       }
       for (var l in languages)
       {
          language_options.push(new StringSelectMenuOptionBuilder()
             .setLabel(language_labels[l])
             .setValue(languages[l]));
+         rolesToAdd.push(languages[l]);
       }
       for (var r in ranks)
       {
          rank_options.push(new StringSelectMenuOptionBuilder()
             .setLabel(ranks[r])
             .setValue(ranks[r]));
+         rolesToAdd.push(ranks[r]);
       }
+      message.guild.roles.fetch().then(groles =>
+      {
+         const newRolesToAdd = [];
+         rolesToAdd.forEach(r =>
+         {
+            const missing = groles.every(gr => gr.name !== r);
+            if (missing) {newRolesToAdd.push(r);}
+         });
+         newRolesToAdd.forEach(r =>
+         {
+            message.guild.roles.create({name: r});
+         });
+      });
+
       const user_role = new StringSelectMenuBuilder()
          .setCustomId("ap_alliances")
          .setPlaceholder("Select your alliance!").addOptions(alliance_options);
@@ -227,6 +207,8 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
          content: stripIndent`
                             Which language do you speak? 
                             Welche Sprache sprechen Sie? 
+                            ¿Qué idioma hablas?
+                            あなたは何語を話しますか?
                             На каком языке вы говорите?`,
          components: [btnrow2]
       });
@@ -234,6 +216,8 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
          content: stripIndent`
                              Which alliance are you in?  
                              In welcher Allianz bist du?  
+                             ¿En qué alianza estás?          
+                             あなたはどの同盟に属していますか?
                              В каком альянсе вы состоите?`,
          components: [btnrow]
       });
@@ -241,6 +225,8 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
          content: stripIndent`
                              Which rank are you?
                              Welchen Rang hast du? 
+                             ¿Que rango tienes?    
+                             あなたはどのランクを保持していますか？
                              Какой у вас ранг?`,
          components: [btnrow3]
       });
