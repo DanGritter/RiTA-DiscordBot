@@ -366,7 +366,8 @@ exports.processAttachments = function(data,cb)
          if (attachment.waveform)
          {
             const member = data.message.member;
-            if (member) {
+            if (member)
+            {
                let spokenlanguage = null;
                for (const language of languages)
                {
@@ -399,7 +400,7 @@ exports.processAttachments = function(data,cb)
                      return resolve();
                   }
                });
-	    }
+            }
          }
          else
          {

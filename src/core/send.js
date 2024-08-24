@@ -177,6 +177,7 @@ const embedOn = function(data)
             });
          }
          else
+         if (data.channel)
          {
             data.channel.send({
                embeds: [{
@@ -202,7 +203,14 @@ const embedOn = function(data)
 
                if (err.code && err.code === 50035)
                {
-                  data.channel.send(":warning:  Message is too long.");
+                  if (data.channel)
+                  {
+                     data.channel.send(":warning:  Message is too long.");
+                  }
+                  else
+                  {
+                     logger("dev",`data.channel not defined: ${data.channel}`);
+                  }
                }
 
                // -----------------------------------------------------------
@@ -233,6 +241,10 @@ const embedOn = function(data)
 
                logger("error", errMsg);
             });
+         }
+         else
+         {
+            logger("dev",`data.channel not defined: ${data.channel}`);
          }
       }
       else if (data.attachments.size > 0)
@@ -265,7 +277,14 @@ const embedOn = function(data)
 
          for (let i = 0; i < data.embeds.length; i++)
          {
-            data.channel.send(data.embeds[i].url);
+            if (data.channel)
+            {
+               data.channel.send(data.embeds[i].url);
+            }
+            else
+            {
+               logger("dev",`data.channel not defined: ${data.channel}`);
+            }
          }
       }
    };
@@ -299,12 +318,26 @@ const embedOn = function(data)
                const attachmentObj = new discord.AttachmentBuilder().
                   setFile(attachment.url).
                   setName(attachment.name);
-               data.channel.send(attachmentObj);
+               if (data.channel)
+               {
+                  data.channel.send(attachmentObj);
+               }
+               else
+               {
+                  logger("dev",`data.channel not defined: ${data.channel}`);
+               }
             }
             else
             {
                const attachmentObj = attachment;
-               data.channel.send(attachmentObj);
+               if (data.channel)
+               {
+                  data.channel.send(attachmentObj);
+               }
+               else
+               {
+                  logger("dev",`data.channel not defined: ${data.channel}`);
+               }
             }
             return true;
          });
@@ -380,10 +413,17 @@ const embedOff = function(data)
                .setTimestamp()
                .setFooter({text: "This message will self-destruct in one minute"});
 
-            data.channel.send({embeds: [botEmbedOff]}).then(msg =>
+            if (data.channel)
             {
-               setTimeout(function() {msg.delete();},60000);
-            });
+               data.channel.send({embeds: [botEmbedOff]}).then(msg =>
+               {
+                  setTimeout(function() {msg.delete();},60000);
+               });
+            }
+            else
+            {
+               logger("dev",`data.channel not defined: ${data.channel}`);
+            }
          }
       }
       else
@@ -456,7 +496,14 @@ const embedOff = function(data)
             .setDescription(data.text)
             .setFooter({text: data.footer.text});
          sendAttachments(data);
-         data.channel.send({embeds: [embed]});
+         if (data.channel)
+         {
+            data.channel.send({embeds: [embed]});
+         }
+         else
+         {
+            logger("dev",`data.channel not defined: ${data.channel}`);
+         }
       }
       else
       {
@@ -514,12 +561,24 @@ const embedOff = function(data)
                const attachmentObj = new discord.AttachmentBuilder()
                   .setFile(attachment.url)
                   .setName(attachment.name);
+               if (data.channel)
+               {
+                  data.channel.send({files: [attachmentObj]});
+               }
+               else
+               {
+                  logger("dev",`data.channel not defined: ${data.channel}`);
+               }
+            }
+            else
+            if (data.channel)
+            {
+               const attachmentObj = attachment;
                data.channel.send({files: [attachmentObj]});
             }
             else
             {
-               const attachmentObj = attachment;
-               data.channel.send({files: [attachmentObj]});
+               logger("dev",`data.channel not defined: ${data.channel}`);
             }
             return true;
          });

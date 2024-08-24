@@ -266,9 +266,16 @@ exports.listen = function(client)
    client.on("guildMemberRemove", guildmember =>
    {
       const channel = guildmember.guild.channels.cache.get(auth.welcomeChannel);
-      channel.send({
-         content: `${guildmember} has left the server!`
-      });
+      if (channel)
+      {
+         channel.send({
+            content: `${guildmember} has left the server!`
+         });
+      }
+      else
+      {
+         logger("dev", `No welcome channel defined or found: ${auth.welcomeChannel}`);
+      }
    });
 
    // ------------------------
@@ -336,7 +343,9 @@ exports.listen = function(client)
       setTimeout(function ()
       {
          const channel = guildmember.guild.channels.cache.get(auth.welcomeChannel);
-         channel.send(stripIndent`
+         if (channel)
+         {
+            channel.send(stripIndent`
                     ${guildmember}
                     добро пожаловать ${guildmember.guild}
                     Пожалуйста, перейдите по ссылке <#${auth.setupChannel}>, чтобы настроить языки и альянс!
@@ -346,6 +355,11 @@ exports.listen = function(client)
 
                     Willkommen bei ${guildmember.guild}
                     Bitte gehen Sie zu <#${auth.setupChannel}>, um Sprachen und Allianzen einzurichten!`);
+         }
+         else
+         {
+            logger("dev", `No welcome channel defined or found: ${auth.welcomeChannel}`);
+         }
       }, 3000);
    });
 

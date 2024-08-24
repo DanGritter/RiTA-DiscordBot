@@ -61,10 +61,17 @@ const hookSend = function(data)
          text: data.footer
       }
    });
-   hook.send({embeds: [embed]}).catch(err =>
+   if (hook)
    {
-      console.error("hook.send error:\n" + err);
-   });
+      hook.send({embeds: [embed]}).catch(err =>
+      {
+         console.error("hook.send error:\n" + err);
+      });
+   }
+   else
+   {
+      console.error("hook not defined:");
+   }
 };
 
 // -------------
