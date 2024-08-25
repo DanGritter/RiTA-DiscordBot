@@ -3,7 +3,6 @@
 // -----------------
 
 // codebeat:disable[LOC,ABC,BLOCK_NESTING,ARITY]
-const autoTranslate = require("./auto");
 const Sequelize = require("sequelize");
 const logger = require("./logger");
 const Op = Sequelize.Op;
@@ -319,7 +318,7 @@ exports.updateColumns = function(data)
 };
 
 // ------------------
-// Get Channel Tasks
+// Get Channel Groups
 // ------------------
 exports.groups = function(group)
 {
@@ -336,7 +335,7 @@ exports.groups = function(group)
       });
 };
 
-exports.channelTasks = function(data)
+exports.channelTasks = function(data,cb)
 {
    var id = data.message.channel.id;
    if (data.message.channel.type === "dm")
@@ -350,14 +349,14 @@ exports.channelTasks = function(data)
          function (result)
          {
             data.rows = result;
-            return autoTranslate(data);
+            return cb(data);
          });
    }
    catch (e)
    {
       logger("error", e);
       data.err = e;
-      return autoTranslate(data);
+      return cb(data);
    }
 };
 // ------------------------------
@@ -474,9 +473,18 @@ exports.remGroup = function(group)
    {
       return Groups.destroy({ where: { [Op.and]: [{ name: group.name }, {server: group.server}, {channel: group.channel}]}});
    }
-   return Groups.destroy({ where: { [Op.and]: [{ name: group.name }, {server: group.server}]}});
+   else if (group.lang)
+   {
+      return Groups.destroy({ where: { [Op.and]: [{ name: group.name }, {server: group.server}, {lang: group.lang}]}});
+   }
+   else if (group.name)
+   {
+      return Groups.destroy({ where: { [Op.and]: [{ name: group.name }, {server: group.server}]}});
+   }
+   return Groups.destroy({ where: { [Op.and]: [{server: group.server}]}});
 };
-exports.addGroup = function(group)
+
+exports.addGroup = function(group,cb)
 {
    Groups.upsert({
       name: group.name,
@@ -487,15 +495,52 @@ exports.addGroup = function(group)
    }).then(() =>
    {
       logger("dev", "group added successfully.");
+      cb(null);
    })
       .catch(err =>
       {
-         logger("error", err);
+         cb(err);
       });
 };
-exports.getGroups = function(guild, name, cb)
+
+exports.getGroupsCount = function(data, cb)
 {
-   return Groups.findAll({ where: { [Op.and]: [{name: name},{server: guild}] }}, {raw: true}).then(
+   return Tasks.count({ where: {"server": data.server }}).then(c =>
+   {
+      cb(null, c);
+   }).catch(err =>
+   {
+      cb(err);
+   });
+};
+
+exports.getGroup = function(data, cb)
+{
+   if (data.channel)
+   {
+      return Groups.findAll({ where: { [Op.and]: [{name: data.name},{server: data.server},{channel: data.channel}] }}, {raw: true}).then(
+         function (result, err)
+         {
+            cb(err, result);
+         });
+   }
+   else if (data.lang)
+   {
+      return Groups.findAll({ where: { [Op.and]: [{name: data.name},{server: data.server},{lang: data.lang}] }}, {raw: true}).then(
+         function (result, err)
+         {
+            cb(err, result);
+         });
+   }
+   else if (data.name)
+   {
+      return Groups.findAll({ where: { [Op.and]: [{name: data.name},{server: data.server}] }}, {raw: true}).then(
+         function (result, err)
+         {
+            cb(err, result);
+         });
+   }
+   return Groups.findAll({ where: { server: data.server}}, {raw: true}).then(
       function (result, err)
       {
          cb(err, result);

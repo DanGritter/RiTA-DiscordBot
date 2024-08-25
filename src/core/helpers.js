@@ -12,7 +12,7 @@ const speech = require("@google-cloud/speech").v1;
 
 const projectId = "mindful-marking-432022-g6";
 const client = new speech.SpeechClient();
-const { languages,langMap} = require("../message");
+const { languages,langMap} = require("./languages");
 
 
 // Creates a client

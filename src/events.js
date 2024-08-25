@@ -11,7 +11,8 @@ const oneLine = require("common-tags").oneLine;
 const auth = require("./core/auth");
 const logger = require("./core/logger");
 const { ParseInteraction} = require("./commands/args");
-const { messageHandler, alliances, languages,ranks} = require("./message");
+const { messageHandler} = require("./message");
+const { alliances, languages,ranks } = require("./core/languages");                
 const db = require("./core/db");
 const fn = require("./core/helpers");
 const setStatus = require("./core/status");
@@ -93,7 +94,8 @@ exports.listen = function(client)
          maxChains: 10,
          maxChainLen: 5,
          maxEmbeds: 5,
-         maxTasksPerChannel: 10
+         maxTasksPerChannel: 10,
+         maxGroupsPerGuild: 30
       };
 
       let shard = client.shard;
@@ -466,7 +468,10 @@ exports.listen = function(client)
             }
             return;
          }
-         ParseInteraction(interaction);
+         ParseInteraction({interaction: interaction,
+            commandName: interaction.commandName,
+            options: interaction.options,
+            config: config });
       }
    });
 };

@@ -11,225 +11,188 @@ const logger = require("../core/logger");
 // -------------------------------
 // setup translate group
 // -------------------------------
-
-module.exports.add = function(data)
+module.exports.main = function(data)
 {
-   // -------------------------------------------------
-   // Disallow this command in Direct/Private messages
-   // -------------------------------------------------
+   const subcommands = { "add": module.exports.add,
+      "list": module.exports.list,
+      "remove": module.exports.remove };
+   subcommands[data.options.getSubcommand()](data);
+};
 
-   if (data.message.channel.type === "dm")
-   {
-      data.color = "error";
-      data.text =
-         ":no_entry:  This command can only be called in server channels.";
-
-      // -------------
-      // Send message
-      // -------------
-
-      return botSend(data);
-   }
-
-   // ------------------
-   // Prepare task data
-   // ------------------
-
+module.exports.list = function(data)
+{
    data.group = {
       name: data.name,
       channel: data.channel,
       lang: data.lang,
-      server: data.guild
+      server: data.guild.id
    };
 
    // --------------------
-   // log task data (dev)
+   // log group data (dev)
    // --------------------
 
    logger("dev", data.group);
-
-   // ------------------------------------------
-   // Error if non-manager sets channel as dest
-   // ------------------------------------------
-
-   if (data.cmd.for[0] !== "me" && !data.message.isManager)
+   data.interaction.deferReply({content: "Listing groups",
+      ephemeral: true}).then(value =>
    {
-      data.color = "error";
-      data.text =
-         ":cop:  You need to be a channel manager to " +
-         "auto translate for others.";
-
-      // -------------
-      // Send message
-      // -------------
-
-      return botSend(data);
-   }
-
-   // -----------------------------------------------
-   // Error if channel exceeds maximum allowed tasks
-   // -----------------------------------------------
-
-   db.getTasksCount(data.task.origin, function(err, res)
-   {
-      if (err)
+      db.getGroup(data.group,(err,result)=>
       {
-         logger("error", err);
-      }
-
-      const taskCount = res[Object.keys(res)[0]];
-
-      if (data.task.for.length + taskCount >= data.config.maxTasksPerChannel)
-      {
-         data.color = "error";
-         data.text =
-            ":no_entry:  Cannot add more auto-translation tasks for this " +
-            `channel (${data.config.maxTasksPerChannel} max)`;
-
-         // -------------
-         // Send message
-         // -------------
-
-         return botSend(data);
-      }
+         if (err)
+         {
+            data.interaction.followUp({content: "Couldn't list group",
+               ephemeral: true});
+         }
+         else
+         if (result.length > 0)
+         {
+            let text = "";
+            result.forEach(row =>
+            {
+               if (row.dataValues.active)
+               {
+                  text += `${row.dataValues.server}.${row.dataValues.name}: ${row.dataValues.channel} in ${row.dataValues.lang} \n`;
+               }
+               else
+               {
+                  text += `${row.dataValues.server}.${row.dataValues.name}: ${row.dataValues.channel} in ${row.dataValues.lang} (inactive) \n`;
+               }
+            });
+            data.interaction.followUp({content: text,
+               ephemeral: true});
+         }
+         else
+         {
+            data.interaction.followUp({content: "No groups defined",
+               ephemeral: true});
+         }
+      });
    });
 };
 
 module.exports.remove = function(data)
 {
-   // -------------------------------------------------
-   // Disallow this command in Direct/Private messages
-   // -------------------------------------------------
-
-   if (data.message.channel.type === "dm")
-   {
-      data.color = "error";
-      data.text =
-         ":no_entry:  This command can only be called in server channels.";
-
-      // -------------
-      // Send message
-      // -------------
-
-      return botSend(data);
-   }
-
    // ------------------
-   // Prepare task data
+   // Prepare group data
    // ------------------
 
    data.group = {
       name: data.name,
       channel: data.channel,
       lang: data.lang,
-      server: data.guild
+      server: data.guild.id
    };
 
    // --------------------
-   // log task data (dev)
+   // log group data (dev)
    // --------------------
-
    logger("dev", data.group);
-
-   // ------------------------------------------
-   // Error if non-manager sets channel as dest
-   // ------------------------------------------
-
-   if (data.cmd.for[0] !== "me" && !data.message.isManager)
+   data.interaction.deferReply({content: "Removing group",
+      ephemeral: true}).then(value =>
    {
-      data.color = "error";
-      data.text =
-         ":cop:  You need to be a channel manager to " +
-         "auto translate for others.";
-
-      // -------------
-      // Send message
-      // -------------
-
-      return botSend(data);
-   }
-
-   // -----------------------------------------------
-   // Error if channel exceeds maximum allowed tasks
-   // -----------------------------------------------
+      db.remGroup(data.group,err =>
+      {
+         if (err)
+         {
+            data.interaction.followUp({content: `Couldn't remove group - ${err}`,
+               ephemeral: true});
+         }
+         else
+         {
+            data.interaction.followUp({content: "Group removed",
+               ephemeral: true});
+         }
+      });
+   });
 };
 
-module.exports.list = function(data)
+module.exports.add = function(data)
 {
-   // -------------------------------------------------
-   // Disallow this command in Direct/Private messages
-   // -------------------------------------------------
-
-   if (data.message.channel.type === "dm")
-   {
-      data.color = "error";
-      data.text =
-         ":no_entry:  This command can only be called in server channels.";
-
-      // -------------
-      // Send message
-      // -------------
-
-      return botSend(data);
-   }
-
    // ------------------
-   // Prepare task data
+   // Prepare group data
    // ------------------
-
-   data.group = {
-      name: data.name,
-      channel: data.channel,
-      lang: data.lang,
-      server: data.guild
-   };
-
-   // --------------------
-   // log task data (dev)
-   // --------------------
-
-   logger("dev", data.group);
-
-   // ------------------------------------------
-   // Error if non-manager sets channel as dest
-   // ------------------------------------------
-
-   if (data.cmd.for[0] !== "me" && !data.message.isManager)
+   data.interaction.deferReply({content: "Adding group",
+      ephemeral: true}).then(value =>
    {
-      data.color = "error";
-      data.text =
-         ":cop:  You need to be a channel manager to " +
-         "auto translate for others.";
+      const grouplookup = {
+         name: data.name,
+         server: data.guild.id
+      };
+      data.group = {
+         name: data.name,
+         channel: data.channel ? data.channel.id : null,
+         lang: data.lang,
+         server: data.guild.id
+      };
 
-      // -------------
-      // Send message
-      // -------------
+      // --------------------
+      // log group data (dev)
+      // --------------------
 
-      return botSend(data);
-   }
+      logger("dev", data.group);
 
-
-   db.getGroupsCount(data.task.origin, function(err, res)
-   {
-      if (err)
+      // ------------------------------------------
+      // Error if non-manager sets channel as dest
+      // ------------------------------------------
+      function addGroup(data)
       {
-         logger("error", err);
+         db.addGroup(data.group,err =>
+         {
+            if (err)
+            {
+               data.interaction.followUp({content: `Couldn't add group - ${err}`,
+                  ephemeral: true});
+            }
+            else
+            {
+               data.interaction.followUp({content: "Group added",
+                  ephemeral: true});
+            }
+         });
       }
-
-      const groupCount = res[Object.keys(res)[0]];
-
-      if (data.task.for.length + groupCount >= data.config.maxGroupsPerChannel)
+      db.getGroup(grouplookup,(err,result)=>
       {
-         data.color = "error";
-         data.text =
-            ":no_entry:  Cannot add more auto-translation tasks for this " +
-            `channel (${data.config.maxTasksPerChannel} max)`;
+         if (result.length > 0)
+         {
+            db.getGroup(data.group,(err,result)=>
+            {
+               if (result.length > 0)
+               {
+                  data.interaction.followUp({content: `Couldn't add group - already exists for this language or channel`,
+                     ephemeral: true});
+               }
+               else
+               {
+                  addGroup(data);
+               }
+            });
+         }
+         else
+         {
+            db.getGroupsCount(data.group, function(err, res)
+            {
+               if (err)
+               {
+                  logger("error", err);
+               }
 
-         // -------------
-         // Send message
-         // -------------
+               const groupCount = res[Object.keys(res)[0]];
 
-         return botSend(data);
-      }
+               if (groupCount + 1 >= data.config.maxGroupsPerGuild)
+               {
+                  const text =
+            ":no_entry:  Cannot add more auto-translation groups for this " +
+            `channel (${data.config.maxGroupsPerGuild} max)`;
+
+                  // -------------
+                  // Send message
+                  // -------------
+                  data.interaction.followUp({content: text,
+                     ephemeral: true});
+               }
+               addGroup(data);
+            });
+         }
+      });
    });
 };

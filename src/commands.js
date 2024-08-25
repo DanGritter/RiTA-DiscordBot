@@ -2,9 +2,15 @@ const { ApplicationCommandOptionType } = require("discord-api-types/v10");
 const { ChannelType } = require("discord.js");
 
 const languages = [ {name: "English",
-   value: "English"}, {name: "German",
-   value: "German"}, {name: "Russian",
-   value: "Russian"} ];
+   value: "English"},
+{name: "German",
+   value: "German"},
+{name: "Russian",
+   value: "Russian"},
+{name: "Spanish",
+   value: "Spanish"},
+{name: "Japanese",
+   value: "Japanese"} ];
 
 const commands = [
    // 0
@@ -98,7 +104,7 @@ const commands = [
       description: "Create translation group",
       options: [
          {
-            name: "action",
+            "name": "action",
             "type": ApplicationCommandOptionType.SubcommandGroup,
             description: "What type of group action",
             options: [{
@@ -115,7 +121,7 @@ const commands = [
                   {
                      choices: languages,
                      "type": ApplicationCommandOptionType.String,
-                     name: "to",
+                     name: "lang",
                      description: "language this channel uses",
                      required: true
                   },
@@ -135,8 +141,7 @@ const commands = [
                   {
                      "type": ApplicationCommandOptionType.String,
                      name: "name",
-                     description: "group name",
-                     required: true
+                     description: "group name"
                   },
                   {
                      "type": ApplicationCommandOptionType.Channel,
@@ -159,8 +164,7 @@ const commands = [
                   {
                      "type": ApplicationCommandOptionType.String,
                      name: "name",
-                     description: "group name",
-                     required: true
+                     description: "group name"
                   }
                ]
             }

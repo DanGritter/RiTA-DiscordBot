@@ -7,27 +7,12 @@ const db = require("./core/db");
 const fn = require("./core/helpers");
 const auth = require("./core/auth");
 const events = require("./events");
-const { ParseArgs } = require("./commands/args");
+const autoTranslate = require("./core/auto");
+const { ParseArgs} = require("./commands/args");
+const {  alliances, languages, language_labels, ranks} = require("./core/languages");
 const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle, PermissionsBitField, ChannelType } = require("discord.js");
 const stripIndent = require("common-tags").stripIndent;
 
-const alliances = ["555", "DIF", "FNB", "KSM", "LoU", "OGs", "OPG", "OPS", "PrO","TAR", "TDS", "TIR", "wlf", "WTF"];
-
-const languages = ["English", "Russian", "German", "Spanish", "Japanese"];
-
-const langMap = {"English": "en-US",
-   "Russian": "ru-RU",
-   "German": "de-DE"};
-
-const language_labels = ["English", "Русский", "Deutsch", "Español", "日本語" ];
-
-const ranks = ["R5", "R4", "R3", "R2", "R1"];
-
-module.exports.alliances = alliances;
-module.exports.languages = languages;
-module.exports.langMap = langMap;
-module.exports.ranks = ranks;
-module.exports.language_labels = language_labels;
 // --------------------
 // Listen for messages
 // --------------------
@@ -205,8 +190,8 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       });
       channel.send({
          content: stripIndent`
-                            Which language do you speak? 
-                            Welche Sprache sprechen Sie? 
+                            Which language do you speak?
+                            Welche Sprache sprechen Sie?
                             ¿Qué idioma hablas?
                             あなたは何語を話しますか?
                             На каком языке вы говорите?`,
@@ -214,9 +199,9 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       });
       channel.send({
          content: stripIndent`
-                             Which alliance are you in?  
-                             In welcher Allianz bist du?  
-                             ¿En qué alianza estás?          
+                             Which alliance are you in?
+                             In welcher Allianz bist du?
+                             ¿En qué alianza estás?
                              あなたはどの同盟に属していますか?
                              В каком альянсе вы состоите?`,
          components: [btnrow]
@@ -224,8 +209,8 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
       channel.send({
          content: stripIndent`
                              Which rank are you?
-                             Welchen Rang hast du? 
-                             ¿Que rango tienes?    
+                             Welchen Rang hast du?
+                             ¿Que rango tienes?
                              あなたはどのランクを保持していますか？
                              Какой у вас ранг?`,
          components: [btnrow3]
@@ -235,6 +220,6 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
    // --------------------------
    // Check for automatic tasks
    // --------------------------
-   return db.channelTasks(data);
+   return db.channelTasks(data,autoTranslate);
 };
 
