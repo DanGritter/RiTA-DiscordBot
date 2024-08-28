@@ -29,7 +29,7 @@ const cmdTranslateTasks = require("./translate.tasks");
 const cmdMap = {
    "this": cmdTranslateThis,
    "last": cmdTranslateLast,
-   "auto": cmdTranslateAuto,
+   "auto": cmdTranslateAuto.main,
    "group": cmdTranslateGroup.main,
    "stop": cmdTranslateStop,
    "tasks": cmdTranslateTasks,
@@ -37,7 +37,7 @@ const cmdMap = {
    "info": cmdHelp,
    "list": cmdList,
    "stats": cmdStats,
- //  "embed": cmdEmbed.run,
+   //  "embed": cmdEmbed.run,
    "version": cmdVersion,
    "invite": cmdMisc.invite,
    "shards": cmdMisc.shards,
@@ -174,15 +174,16 @@ module.exports.ParseInteraction = function(data)
    if (output.main === "group")
    {
       data.name = data.options.getString("name");
-      data.lang = data.options.getString("lang");
+      data.lang = langCheck(data.options.getString("lang"));
       data.guild = data.interaction.guild;
-      data.channel = data.options.getString("channel");
+      data.channel = data.options.getChannel("channel");
+      data.channelname = data.options.getString("channelname");
    }
    else
    if (data.options.data.length > 0)
    {
-      output.to = data.options.getString("to");
-      output.from = data.options.getString("from");
+      output.to = langCheck(data.options.getString("to"));
+      output.from = langCheck(data.options.getString("from"));
       output.for = data.options.getString("for");
       output.num = data.options.getInteger("num");
    }

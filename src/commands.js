@@ -104,72 +104,77 @@ const commands = [
       description: "Create translation group",
       options: [
          {
-            "name": "action",
-            "type": ApplicationCommandOptionType.SubcommandGroup,
-            description: "What type of group action",
-            options: [{
-               name: "add",
-               description: "add group or group item",
-               "type": ApplicationCommandOptionType.Subcommand,
-               options: [
-                  {
-                     "type": ApplicationCommandOptionType.String,
-                     name: "name",
-                     description: "group name",
-                     required: true
-                  },
-                  {
-                     choices: languages,
-                     "type": ApplicationCommandOptionType.String,
-                     name: "lang",
-                     description: "language this channel uses",
-                     required: true
-                  },
-                  {
-                     "type": ApplicationCommandOptionType.Channel,
-                     name: "channel",
-                     description: "channel to add to group, will be created if it doesn't exist based on translation from group name",
-                     channel_types: [ChannelType.GuildText]
-                  }
-               ]
-            },
-            {
-               name: "remove",
-               description: "remove group or group item",
-               "type": ApplicationCommandOptionType.Subcommand,
-               options: [
-                  {
-                     "type": ApplicationCommandOptionType.String,
-                     name: "name",
-                     description: "group name"
-                  },
-                  {
-                     "type": ApplicationCommandOptionType.Channel,
-                     name: "channel",
-                     description: "channel to remove to group",
-                     channel_types: [ChannelType.GuildText]
-                  },
-                  {
-                     "type": ApplicationCommandOptionType.String,
-                     name: "lang",
-                     description: "language to remove from group"
-                  }
-               ]
-            },
-            {
-               name: "list",
-               description: "list groups",
-               "type": ApplicationCommandOptionType.Subcommand,
-               options: [
-                  {
-                     "type": ApplicationCommandOptionType.String,
-                     name: "name",
-                     description: "group name"
-                  }
-               ]
-            }
+            //    "name": "action",
+            //    "type": ApplicationCommandOptionType.SubcommandGroup,
+            //    description: "What type of group action",
+            //    options: [{
+            name: "add",
+            description: "add group or group item",
+            "type": ApplicationCommandOptionType.Subcommand,
+            options: [
+               {
+                  "type": ApplicationCommandOptionType.String,
+                  name: "name",
+                  description: "group name",
+                  required: true
+               },
+               {
+                  choices: languages,
+                  "type": ApplicationCommandOptionType.String,
+                  name: "lang",
+                  description: "language this channel uses",
+                  required: true
+               },
+               {
+                  "type": ApplicationCommandOptionType.Channel,
+                  name: "channel",
+                  description: "channel to add to group, will be created if it doesn't exist based on translation from group name",
+                  channel_types: [ChannelType.GuildText]
+               },
+               {
+                  "type": ApplicationCommandOptionType.String,
+                  name: "channelname",
+                  description: "Channel Name to use to create the channel if channel doesn't already exist"
+               }
             ]
-         }]
+         },
+         {
+            name: "remove",
+            description: "remove group or group item",
+            "type": ApplicationCommandOptionType.Subcommand,
+            options: [
+               {
+                  "type": ApplicationCommandOptionType.String,
+                  name: "name",
+                  description: "group name"
+               },
+               {
+                  "type": ApplicationCommandOptionType.Channel,
+                  name: "channel",
+                  description: "channel to remove to group",
+                  channel_types: [ChannelType.GuildText]
+               },
+               {
+                  "type": ApplicationCommandOptionType.String,
+                  name: "lang",
+                  description: "language to remove from group"
+               }
+            ]
+         },
+         {
+            name: "list",
+            description: "list groups",
+            "type": ApplicationCommandOptionType.Subcommand,
+            options: [
+               {
+                  "type": ApplicationCommandOptionType.String,
+                  name: "name",
+                  description: "group name"
+               }
+            ]
+         }
+      ]
+      // }]
    },
    // 4
    {

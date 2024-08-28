@@ -39,6 +39,11 @@ module.exports = function(data)
       data.proccess = true;
       fn.processAttachments(data, cbdata =>
       {
+         const regex = /\@everyone / ;
+         if (cbdata.message.content && cbdata.message.content.search(regex) >= 0) {
+            cbdata.everyone = true;
+            cbdata.message.content = cbdata.message.content.replace(regex,"");
+	 }
          for (var i = 0; i < cbdata.rows.length; i++)
          {
             analyzeRows(cbdata, i);

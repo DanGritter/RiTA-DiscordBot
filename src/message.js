@@ -9,7 +9,7 @@ const auth = require("./core/auth");
 const events = require("./events");
 const autoTranslate = require("./core/auto");
 const { ParseArgs} = require("./commands/args");
-const {  alliances, languages, language_labels, ranks} = require("./core/languages");
+const { alliances, languages, language_labels, ranks} = require("./core/languages");
 const { Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalBuilder, TextInputBuilder, StringSelectMenuBuilder,StringSelectMenuOptionBuilder, TextInputStyle, PermissionsBitField, ChannelType } = require("discord.js");
 const stripIndent = require("common-tags").stripIndent;
 

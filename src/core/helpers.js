@@ -427,3 +427,26 @@ exports.processAttachments = function(data,cb)
 
    cb(data);
 };
+exports.createChannel = function(guild, channelName, cb)
+{
+   guild.channels.fetch().then(channels =>
+   {
+      const newRolesToAdd = [];
+      const missing = channels.every(c => c.name !== channelName);
+      if (missing)
+      {
+         guild.channels.create({name: channelName}).
+            then(channel =>
+            {
+               return cb(channel);
+            }).catch(err =>
+            {
+               return cb(null,err);
+            });
+      }
+      else
+      {
+         return cb(null,"Channel already exists");
+      }
+   });
+};

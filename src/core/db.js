@@ -467,21 +467,21 @@ exports.getServersCount = function(cb)
 //      type: Sequelize.STRING(8),
 //      defaultValue: "en"
 //   },
-exports.remGroup = function(group)
+exports.remGroup = function(group,cb)
 {
    if (group.channel)
    {
-      return Groups.destroy({ where: { [Op.and]: [{ name: group.name }, {server: group.server}, {channel: group.channel}]}});
+      return Groups.destroy({ where: { [Op.and]: [{ name: group.name }, {server: group.server}, {channel: group.channel}]}}).then((err,result)=> cb(err,result));
    }
    else if (group.lang)
    {
-      return Groups.destroy({ where: { [Op.and]: [{ name: group.name }, {server: group.server}, {lang: group.lang}]}});
+      return Groups.destroy({ where: { [Op.and]: [{ name: group.name }, {server: group.server}, {lang: group.lang}]}}).then((err,result)=> cb(err,result));
    }
    else if (group.name)
    {
-      return Groups.destroy({ where: { [Op.and]: [{ name: group.name }, {server: group.server}]}});
+      return Groups.destroy({ where: { [Op.and]: [{ name: group.name }, {server: group.server}]}}).then((err,result)=> cb(err,result));
    }
-   return Groups.destroy({ where: { [Op.and]: [{server: group.server}]}});
+   return Groups.destroy({ where: { [Op.and]: [{server: group.server}]}}).then((err,result)=> cb(err,result));
 };
 
 exports.addGroup = function(group,cb)

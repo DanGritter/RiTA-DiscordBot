@@ -12,7 +12,7 @@ const logger = require("../core/logger");
 // Auto translate Channel/Author
 // -------------------------------
 
-module.exports = function(data)
+module.exports.main = function(data)
 {
    // -------------------------------------------------
    // Disallow this command in Direct/Private messages
@@ -260,77 +260,77 @@ module.exports = function(data)
          {
             data.task.dest = fn.removeDupes(this.dest);
             data.task.invalid = fn.removeDupes(data.task.invalid);
-            validateTask();
+            module.exports.validateTask(botSend);
          }
       }
    };
+};
 
-   // --------------------------------------------
-   // Validate Task(s) before sending to database
-   // --------------------------------------------
+// --------------------------------------------
+// Validate Task(s) before sending to database
+// --------------------------------------------
 
-   const validateTask = function()
+module.exports.validateTask = function(vdata,cb)
+{
+   // --------------
+   // Invalid dests
+   // --------------
+
+   if (vdata.task.invalid.length > 0)
    {
-      // --------------
-      // Invalid dests
-      // --------------
-
-      if (data.task.invalid.length > 0)
-      {
-         data.color = "error";
-         data.text = ":warning:  Invalid auto translation request.";
-
-         // -------------
-         // Send message
-         // -------------
-
-         return botSend(data);
-      }
-
-      // ----------------------------------
-      // Multiple dests set by non-manager
-      // ----------------------------------
-
-      if (data.task.dest.length > 1 && !data.message.isManager)
-      {
-         data.color = "error";
-         data.text =
-            ":cop::skin-tone-3:  You need to be a channel manager " +
-            "to auto translate this channel for others.";
-
-         // -------------
-         // Send message
-         // -------------
-
-         return botSend(data);
-      }
-
-      // ---------------------
-      // Add task to database
-      // ---------------------
-
-      db.addTask(data.task);
-
-      // -------------------------
-      // Send out success message
-      // -------------------------
-
-      const langFrom = data.cmd.from.valid[0].name;
-      const langTo = data.cmd.to.valid[0].name;
-      const forNames = data.cmd.for.join(",  ").replace(
-         "me", `<@${data.message.author.id}>`
-      );
-
-      data.color = "ok";
-      data.text =
-         ":white_check_mark:  Automatically translating messages " +
-         `from **\`${langFrom}\`** to **\`${langTo}\`** ` +
-         `for ${forNames}.`;
+      vdata.color = "error";
+      vdata.text = ":warning:  Invalid auto translation request.";
 
       // -------------
       // Send message
       // -------------
 
-      return botSend(data);
-   };
+      return cb(vdata);
+   }
+
+   // ----------------------------------
+   // Multiple dests set by non-manager
+   // ----------------------------------
+
+   if (vdata.task.dest.length > 1 && !vdata.message.isManager)
+   {
+      vdata.color = "error";
+      vdata.text =
+            ":cop::skin-tone-3:  You need to be a channel manager " +
+            "to auto translate this channel for others.";
+
+      // -------------
+      // Send message
+      // -------------
+
+      return cb(vdata);
+   }
+
+   // ---------------------
+   // Add task to vdatabase
+   // ---------------------
+
+   db.addTask(vdata.task);
+
+   // -------------------------
+   // Send out success message
+   // -------------------------
+
+   const langFrom = vdata.cmd.from.valid[0].name;
+   const langTo = vdata.cmd.to.valid[0].name;
+   const forNames = vdata.cmd.for.join(",  ").replace(
+      "me", `<@${vdata.message.author.id}>`
+   );
+
+   vdata.color = "ok";
+   vdata.text =
+         ":white_check_mark:  Automatically translating messages " +
+         `from **\`${langFrom}\`** to **\`${langTo}\`** ` +
+         `for ${forNames}.`;
+
+   // -------------
+   // Send message
+   // -------------
+
+   return cb(vdata);
 };

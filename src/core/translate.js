@@ -85,7 +85,7 @@ const bufferChains = function(data, from, cb)
          from}).then(res =>
       {
          const output = translateFix(res[1].data.translations[0].translatedText);
-
+         if (data.everyone) output = "@everyone " + output;
          getUserColor(chain, function(gotData)
          {
             translatedChains.push({
@@ -318,9 +318,14 @@ module.exports = function(data,cb) //eslint-disable-line complexity
 
    var guild = null;
 
-   if (data.message.channel.type === "text")
+   if (data.message && data.message.channel.type === "text")
    {
       guild = data.message.channel.guild;
+   }
+   else
+   if (data.interaction && data.interaction.channel.type === "text")
+   {
+      guild = data.interaction.channel.guild;
    }
 
    // ----------------------------------------------
@@ -419,17 +424,26 @@ module.exports = function(data,cb) //eslint-disable-line complexity
    {
       translate.translate(tdata.translate.original, opts).then(res =>
       {
-         updateServerStats(tdata.message);
+         if (tdata.message)
+         {
+            updateServerStats(tdata.message);
+	 }
          tdata.forward = fw;
          tdata.footer = ft;
-         tdata.color = tdata.author.displayHexColor;
-         tdata.text = translateFix(res[1].data.translations[0].translatedText);
-         tdata.showAuthor = true;
+         tdata.color = tdata.author ? tdata.author.displayHexColor : null;
+         tdata.showAuthor = tdata.author ? true : false;
+         let output = translateFix(res[1].data.translations[0].translatedText);
+         if (tdata.everyone) output = "@everyone" + output;
+         tdata.text = output;
          processAttachments(tdata,opts,cb);
       });
    }
    else
    {
+      if (tdata.everyone) { 
+         tdata.text = "@everyone";
+         tdata.showAuthor = tdata.author ? true : false;
+      }
       processAttachments(tdata,opts,cb);
    }
    return;
