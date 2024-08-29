@@ -316,21 +316,23 @@ module.exports.validateTask = function(vdata,cb)
    // Send out success message
    // -------------------------
 
-   const langFrom = vdata.cmd.from.valid[0].name;
-   const langTo = vdata.cmd.to.valid[0].name;
-   const forNames = vdata.cmd.for.join(",  ").replace(
-      "me", `<@${vdata.message.author.id}>`
-   );
+   if (vdata.cmd.from && vdata.cmd.to)
+   {
+      const langFrom = vdata.cmd.from.valid[0].name;
+      const langTo = vdata.cmd.to.valid[0].name;
+      const forNames = vdata.cmd.for.join(",  ").replace(
+         "me", `<@${vdata.message.author.id}>`
+      );
 
-   vdata.color = "ok";
-   vdata.text =
+      vdata.color = "ok";
+      vdata.text =
          ":white_check_mark:  Automatically translating messages " +
          `from **\`${langFrom}\`** to **\`${langTo}\`** ` +
          `for ${forNames}.`;
+   }
 
    // -------------
    // Send message
    // -------------
-
    return cb(vdata);
 };

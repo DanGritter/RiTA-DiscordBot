@@ -5,9 +5,6 @@
 // codebeat:disable[LOC,ABC,BLOCK_NESTING,ARITY]
 const auth = require("./auth");
 
-const {Translate} = require("@google-cloud/translate").v2;
-const translate = new Translate({key: auth.gcpapikey});
-
 const ISO6391 = require("iso-639-1");
 const fn = require("./helpers");
 

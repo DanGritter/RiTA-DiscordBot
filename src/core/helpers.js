@@ -134,6 +134,20 @@ exports.getRoleColor = function(member)
    }
 };
 
+exports.getRole = function(client, guild, role, cb)
+{
+   var foundRole = guild.roles.cache.find(r => r.name === role);
+   if (foundRole)
+   {
+      return cb(foundRole);
+   }
+   guild.roles.cache.fetch().then(roles =>
+   {
+      foundRole = roles.find(f => f.name === role);
+      return cb(foundRole);
+   });
+};
+
 // ---------
 // Get user
 // ---------
@@ -427,18 +441,20 @@ exports.processAttachments = function(data,cb)
 
    cb(data);
 };
-exports.createChannel = function(guild, channelName, cb)
+exports.createChannel = function(guild, channelName, roles, cb)
 {
    guild.channels.fetch().then(channels =>
    {
-      const newRolesToAdd = [];
       const missing = channels.every(c => c.name !== channelName);
       if (missing)
       {
          guild.channels.create({name: channelName}).
             then(channel =>
             {
-               return cb(channel);
+               channel.edit({permissionOverwrites: roles}).then(value =>
+               {
+                  return cb(channel);
+               });
             }).catch(err =>
             {
                return cb(null,err);

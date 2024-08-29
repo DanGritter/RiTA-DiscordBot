@@ -10,73 +10,12 @@ const db = require("../core/db");
 // --------------------
 // Handle stop command
 // --------------------
-
-module.exports = function(data)
+function doShowTasks(data,origin,dest,server)
 {
-   // -------------------------------------------------
-   // Disallow this command in Direct/Private messages
-   // -------------------------------------------------
-
-   if (data.message.channel.type === "dm")
-   {
-      data.color = "warn";
-      data.text =
-         ":no_entry:  This command can only be called in server channels.";
-
-      // -------------
-      // Send message
-      // -------------
-
-      return botSend(data);
-   }
-
-   // -------------------------------
-   // Disallow multiple destinations
-   // -------------------------------
-
-   if (data.cmd.for.length > 1)
-   {
-      data.color = "error";
-      data.text = ":warning:  Please specify only one `for` value.";
-
-      // -------------
-      // Send message
-      // -------------
-
-      return botSend(data);
-   }
-
-   // -----------------------------------------
-   // Disallow non-managers to stop for others
-   // -----------------------------------------
-
-   if (data.cmd.for[0] !== "me" && !data.message.isManager)
-   {
-      data.color = "error";
-      data.text =
-         ":cop:  You need to be a channel manager to stop auto translating " +
-         "this channel for others.";
-
-      // -------------
-      // Send message
-      // -------------
-
-      return botSend(data);
-   }
-
-   // ------------------
-   // Prepare task data
-   // ------------------
-
-   const origin = data.message.channel.id;
-   const dest = destID(data.cmd.for[0], data.message.author.id);
-   const destDisplay = destResolver(data.cmd.for[0], data.message.author.id);
-
    // ------------------------------
    // Check if task actually exists
    // ------------------------------
-
-   db.getTasks(origin, dest, function(err, res)
+   db.getTasks(origin, dest, server, function(err, res)
    {
       if (err)
       {
@@ -89,7 +28,7 @@ module.exports = function(data)
 
       if (res.length < 1 || !res)
       {
-         const orig = destResolver(origin);
+         const orig = origin ? destResolver(origin) : null;
          data.color = "error";
          data.text =
             ":warning:  __**No tasks**__ for " +
@@ -105,31 +44,114 @@ module.exports = function(data)
          // Send message
          // -------------
 
-         return botSend(data);
+         if (data.message)
+         {
+            return botSend(data);
+         }
+         return data.interaction.followUp({content: data.text,
+            ephemeral: true});
       }
 
       // ------------------------------------------------
-      // Otherwise, proceed to remove task from database
+      // Otherwise, proceed to display task from database
       // ------------------------------------------------
 
-      shoutTasks(res, data, origin, dest, destDisplay);
+      shoutTasks(res, data, origin, dest);
    });
+}
+
+module.exports = function(data)
+{
+   if (data.message)
+   {
+   // -------------------------------------------------
+   // Disallow this command in Direct/Private messages
+   // -------------------------------------------------
+
+      if (data.message.channel.type === "dm")
+      {
+         data.color = "warn";
+         data.text =
+         ":no_entry:  This command can only be called in server channels.";
+
+         // -------------
+         // Send message
+         // -------------
+
+         return botSend(data);
+      }
+
+      // -------------------------------
+      // Disallow multiple destinations
+      // -------------------------------
+
+      if (data.cmd.for.length > 1)
+      {
+         data.color = "error";
+         data.text = ":warning:  Please specify only one `for` value.";
+
+         // -------------
+         // Send message
+         // -------------
+
+         return botSend(data);
+      }
+
+      // -----------------------------------------
+      // Disallow non-managers to stop for others
+      // -----------------------------------------
+
+      if (data.cmd.for[0] !== "me" && !data.message.isManager)
+      {
+         data.color = "error";
+         data.text =
+         ":cop:  You need to be a channel manager to stop auto translating " +
+         "this channel for others.";
+
+         // -------------
+         // Send message
+         // -------------
+
+         return botSend(data);
+      }
+
+      // ------------------
+      // Prepare task data
+      // ------------------
+
+      const origin = data.message.channel.id;
+      const dest = destID(data.cmd.for[0], data.message.author.id);
+      doShowTasks(data,origin,dest,data.message.guild.id);
+   }
+   else
+   {
+      const origin = data.channel ? data.channel.id : null;
+      const dest = undefined;
+      data.interaction.deferReply({content: "Listing tasks",
+         ephemeral: true}).then(value =>
+      {
+         doShowTasks(data,origin,dest,data.interaction.guild.id);
+      });
+   }
 };
 
 // ---------------------
-// Remove from database
+// Display tasks
 // ---------------------
 
-const shoutTasks = function(res, data, origin, dest, destDisplay)
+const shoutTasks = function(res, data, origin, dest)
 {
-   data.color = "ok";
-   data.text = ":negative_squared_cross_mark:  Translation tasks for this channel:";
+   if (data.message)
+   {
+      data.color = "ok";
+      data.text = ":negative_squared_cross_mark:  Translation tasks for this channel:";
 
-   // -------------
-   // Send message
-   // -------------
+      // -------------
+      // Send message
+      // -------------
 
-   botSend(data);
+      botSend(data);
+   }
 
    for (var i = 0, len = res.length; i < len; i++)
    {
@@ -138,21 +160,31 @@ const shoutTasks = function(res, data, origin, dest, destDisplay)
       const origin = destResolver(task.origin);
       const LangFrom = langCheck(task.LangFrom).valid[0].name;
       const LangTo = langCheck(task.LangTo).valid[0].name;
-      data.text = `:arrow_right:   Translating **${LangFrom}** messages from **<${origin}>** and sending **${LangTo}** messages to **<${dest}>**`;
+      data.text = `:arrow_right:  Guild ${task.server}: Translating **${LangFrom}** messages from **<${origin}>** and sending **${LangTo}** messages to **<${dest}>**`;
+
+      // -------------
+      // Send message
+      // -------------
+      if (data.message)
+      {
+         botSend(data);
+      }
+      else
+      {
+         data.interaction.followUp({content: data.text,
+            ephemeral: true});
+      }
+   }
+   if (data.message)
+   {
+      data.text = ":negative_squared_cross_mark:  That's all I have!";
 
       // -------------
       // Send message
       // -------------
 
-      botSend(data);
+      return botSend(data);
    }
-   data.text = ":negative_squared_cross_mark:  That's all I have!";
-
-   // -------------
-   // Send message
-   // -------------
-
-   return botSend(data);
 };
 // -----------------------
 // Destination ID handler

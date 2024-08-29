@@ -155,6 +155,7 @@ const commands = [
                   channel_types: [ChannelType.GuildText]
                },
                {
+                  choices: languages,
                   "type": ApplicationCommandOptionType.String,
                   name: "lang",
                   description: "language to remove from group"
@@ -172,6 +173,19 @@ const commands = [
                   description: "group name"
                }
             ]
+         },
+         {
+            name: "setup",
+            description: "list groups",
+            "type": ApplicationCommandOptionType.Subcommand,
+            options: [
+               {
+                  "type": ApplicationCommandOptionType.String,
+                  name: "name",
+                  description: "group name",
+                  required: true
+               }
+            ]
          }
       ]
       // }]
@@ -180,35 +194,43 @@ const commands = [
    {
       name: "stop",
       description: "stop translation operations",
-      options:
-    [
-       {
-          name: "stops",
-          "type": ApplicationCommandOptionType.SubcommandGroup,
-          description: "What type of stop",
-          options: [{
-             name: "task",
-             description: "stop task",
-             "type": ApplicationCommandOptionType.Subcommand
-          },
-          {
-             name: "user",
-             description: "stop user translation",
-             "type": ApplicationCommandOptionType.Subcommand
-          },
-          {
-             name: "channel",
-             description: "stop channel translation",
-             "type": ApplicationCommandOptionType.Subcommand
-          },
-          {
-             name: "all",
-             description: "stop guild translation",
-             "type": ApplicationCommandOptionType.Subcommand
-          }
-          ]
-       }
-    ]
+      options: [{
+         name: "task",
+         description: "stop task",
+         "type": ApplicationCommandOptionType.Subcommand
+      },
+      {
+         name: "user",
+         description: "stop user translation",
+         "type": ApplicationCommandOptionType.Subcommand
+      },
+      {
+         name: "channel",
+         description: "stop channel translation",
+         "type": ApplicationCommandOptionType.Subcommand,
+         options: [
+            {
+               "type": ApplicationCommandOptionType.Channel,
+               name: "channel",
+               description: "channel to remove to group",
+               channel_types: [ChannelType.GuildText]
+            }
+         ]
+      },
+      {
+         name: "all",
+         description: "stop guild translation",
+         "type": ApplicationCommandOptionType.Subcommand,
+         options: [
+            {
+               "type": ApplicationCommandOptionType.String,
+               name: "server",
+               description: "server ID to remove tasks from",
+               channel_types: [ChannelType.GuildText]
+            }
+         ]
+      }
+      ]
    },
    // 5
    {
@@ -216,25 +238,27 @@ const commands = [
       description: "interact with tasks",
       options: [
          {
-            name: "tasks",
-            description: "describe the type of task operation",
-            "type": ApplicationCommandOptionType.SubcommandGroup,
-            options: [ {
-               name: "user",
-               description: "stop user translation",
-               "type": ApplicationCommandOptionType.Subcommand
-            },
-            {
-               name: "channel",
-               description: "stop channel translation",
-               "type": ApplicationCommandOptionType.Subcommand
-            },
-            {
-               name: "all",
-               description: "stop guild translation",
-               "type": ApplicationCommandOptionType.Subcommand
-            }
+            name: "user",
+            description: "display user translations",
+            "type": ApplicationCommandOptionType.Subcommand
+         },
+         {
+            name: "channel",
+            description: "display channel translations",
+            "type": ApplicationCommandOptionType.Subcommand,
+            options: [
+               {
+                  "type": ApplicationCommandOptionType.Channel,
+                  name: "channel",
+                  description: "channel to remove to group",
+                  channel_types: [ChannelType.GuildText]
+               }
             ]
+         },
+         {
+            name: "all",
+            description: "display guild translations",
+            "type": ApplicationCommandOptionType.Subcommand
          }
       ]
    },

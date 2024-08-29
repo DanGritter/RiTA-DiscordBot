@@ -363,7 +363,7 @@ exports.channelTasks = function(data,cb)
 // Get tasks for channel or user
 // ------------------------------
 
-exports.getTasks = function(origin, dest, cb)
+exports.getTasks = function(origin, dest, server, cb)
 {
    if (dest === "me")
    {
@@ -374,7 +374,15 @@ exports.getTasks = function(origin, dest, cb)
             cb(err, result);
          });
    }
-   return Tasks.findAll({ where: { origin: origin } }, {raw: true}).then(
+   else if (origin)
+   {
+      return Tasks.findAll({ where: { origin: origin } }, {raw: true}).then(
+         function (result, err)
+         {
+            cb(err, result);
+         });
+   }
+   return Tasks.findAll({ }, {raw: true}).then(
       function (result, err)
       {
          cb(err, result);
@@ -491,7 +499,7 @@ exports.addGroup = function(group,cb)
       server: group.server,
       channel: group.channel,
       active: true,
-      lang: group.to
+      lang: group.lang
    }).then(() =>
    {
       logger("dev", "group added successfully.");

@@ -179,7 +179,10 @@ module.exports.ParseInteraction = function(data)
       data.channel = data.options.getChannel("channel");
       data.channelname = data.options.getString("channelname");
    }
-   else
+   else if (output.main === "tasks")
+   {
+      data.channel = data.options.getChannel("channel");
+   }
    if (data.options.data.length > 0)
    {
       output.to = langCheck(data.options.getString("to"));

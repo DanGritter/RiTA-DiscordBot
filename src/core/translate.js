@@ -84,8 +84,8 @@ const bufferChains = function(data, from, cb)
             from:
          from}).then(res =>
       {
-         const output = translateFix(res[1].data.translations[0].translatedText);
-         if (data.everyone) output = "@everyone " + output;
+         let output = translateFix(res[1].data.translations[0].translatedText);
+         if (data.everyone) {output = "@everyone " + output;}
          getUserColor(chain, function(gotData)
          {
             translatedChains.push({
@@ -427,20 +427,21 @@ module.exports = function(data,cb) //eslint-disable-line complexity
          if (tdata.message)
          {
             updateServerStats(tdata.message);
-	 }
+         }
          tdata.forward = fw;
          tdata.footer = ft;
          tdata.color = tdata.author ? tdata.author.displayHexColor : null;
          tdata.showAuthor = tdata.author ? true : false;
          let output = translateFix(res[1].data.translations[0].translatedText);
-         if (tdata.everyone) output = "@everyone" + output;
+         if (tdata.everyone) {output = "@everyone" + output;}
          tdata.text = output;
          processAttachments(tdata,opts,cb);
       });
    }
    else
    {
-      if (tdata.everyone) { 
+      if (tdata.everyone)
+      {
          tdata.text = "@everyone";
          tdata.showAuthor = tdata.author ? true : false;
       }

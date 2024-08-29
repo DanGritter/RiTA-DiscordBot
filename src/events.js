@@ -57,7 +57,8 @@ async function updateNickname(stalemember)
          });
          if (user_alliance && user_rank)
          {
-            member.setNickname("["+user_alliance + " " + user_rank+"]"+nickname);
+            const newnick = "["+user_alliance + " " + user_rank+"]"+nickname;
+            member.setNickname(newnick.substring(0,32));
          }
       }
    }
@@ -468,10 +469,24 @@ exports.listen = function(client)
             }
             return;
          }
-         ParseInteraction({interaction: interaction,
-            commandName: interaction.commandName,
-            options: interaction.options,
-            config: config });
+         if (interaction.isAdmin)
+         {
+            ParseInteraction({interaction: interaction,
+               commandName: interaction.commandName,
+               options: interaction.options,
+               config: config });
+         }
+         else
+         {
+            interaction.reply({content: `Not authorized to enter commands`,
+               ephemeral: true}).then((sent) =>
+            {
+               setTimeout(function ()
+               {
+                  interaction.deleteReply();
+               }, 2500);
+            });
+         }
       }
    });
 };
