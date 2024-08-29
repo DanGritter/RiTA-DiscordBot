@@ -182,6 +182,8 @@ module.exports.ParseInteraction = function(data)
    else if (output.main === "tasks")
    {
       data.channel = data.options.getChannel("channel");
+      let current = data.options.getBoolean("current");
+      if (current) data.channel = data.interaction.channel;
    }
    if (data.options.data.length > 0)
    {

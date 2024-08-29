@@ -252,6 +252,11 @@ const commands = [
                   name: "channel",
                   description: "channel to remove to group",
                   channel_types: [ChannelType.GuildText]
+               },
+               {
+                  "type": ApplicationCommandOptionType.Boolean,
+                  name: "current",
+                  description: "show tasks for current channel"
                }
             ]
          },

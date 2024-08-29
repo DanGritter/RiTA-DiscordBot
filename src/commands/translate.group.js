@@ -186,9 +186,9 @@ module.exports.list = function(data)
          else
          if (result.length > 0)
          {
-            let text = "";
             result.forEach(row =>
             {
+               let text = "";
                if (row.dataValues.active)
                {
                   text += `${row.dataValues.server}.${row.dataValues.name}: <#${row.dataValues.channel}> in ${row.dataValues.lang} \n`;
@@ -197,9 +197,9 @@ module.exports.list = function(data)
                {
                   text += `${row.dataValues.server}.${row.dataValues.name}: <#${row.dataValues.channel}> in ${row.dataValues.lang} (inactive) \n`;
                }
+               data.interaction.followUp({content: text,
+                  ephemeral: true});
             });
-            data.interaction.followUp({content: text,
-               ephemeral: true});
          }
          else
          {
@@ -257,7 +257,7 @@ function addGroup(data)
       }
       else
       {
-         data.interaction.followUp({content: "Group added",
+         data.interaction.followUp({content: `Group ${data.group.name} added channel <#${data.group.channel}> for language ${data.group.lang}`,
             ephemeral: true});
       }
    });
