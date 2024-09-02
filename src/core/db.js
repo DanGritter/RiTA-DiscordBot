@@ -522,6 +522,17 @@ exports.getGroupsCount = function(data, cb)
    });
 };
 
+exports.getGroups = function(data, cb)
+{
+   return Groups.findAll({ where: { server: data.server},
+      group: ["name"],
+      attributes: ["server","name"]}, {raw: true}).then(
+      function (result, err)
+      {
+         cb(err, result);
+      });
+};
+
 exports.getGroup = function(data, cb)
 {
    if (data.channel)

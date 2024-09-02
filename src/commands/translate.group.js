@@ -176,37 +176,66 @@ module.exports.list = function(data)
    data.interaction.deferReply({content: "Listing groups",
       ephemeral: true}).then(value =>
    {
-      db.getGroup(data.group,(err,result)=>
+      if (data.group.name)
       {
-         if (err)
+         db.getGroup(data.group,(err,result)=>
          {
-            data.interaction.followUp({content: "Couldn't list group",
-               ephemeral: true});
-         }
-         else
-         if (result.length > 0)
-         {
-            result.forEach(row =>
+            if (err)
             {
-               let text = "";
-               if (row.dataValues.active)
-               {
-                  text += `${row.dataValues.server}.${row.dataValues.name}: <#${row.dataValues.channel}> in ${row.dataValues.lang} \n`;
-               }
-               else
-               {
-                  text += `${row.dataValues.server}.${row.dataValues.name}: <#${row.dataValues.channel}> in ${row.dataValues.lang} (inactive) \n`;
-               }
-               data.interaction.followUp({content: text,
+               data.interaction.followUp({content: "Couldn't list group",
                   ephemeral: true});
-            });
-         }
-         else
+            }
+            else
+            if (result.length > 0)
+            {
+               result.forEach(row =>
+               {
+                  let text = "";
+                  if (row.dataValues.active)
+                  {
+                     text += `${row.dataValues.server}.${row.dataValues.name}: <#${row.dataValues.channel}> in ${row.dataValues.lang} \n`;
+                  }
+                  else
+                  {
+                     text += `${row.dataValues.server}.${row.dataValues.name}: <#${row.dataValues.channel}> in ${row.dataValues.lang} (inactive) \n`;
+                  }
+                  data.interaction.followUp({content: text,
+                     ephemeral: true});
+               });
+            }
+            else
+            {
+               data.interaction.followUp({content: "No groups defined",
+                  ephemeral: true});
+            }
+         });
+      }
+      else
+      {
+         db.getGroups(data.group,(err,result)=>
          {
-            data.interaction.followUp({content: "No groups defined",
-               ephemeral: true});
-         }
-      });
+            if (err)
+            {
+               data.interaction.followUp({content: "Couldn't list group",
+                  ephemeral: true});
+            }
+            else
+            if (result.length > 0)
+            {
+               result.forEach(row =>
+               {
+                  const text = `${row.dataValues.server}.${row.dataValues.name}\n`;
+                  data.interaction.followUp({content: text,
+                     ephemeral: true});
+               });
+            }
+            else
+            {
+               data.interaction.followUp({content: "No groups defined",
+                  ephemeral: true});
+            }
+         });
+      }
    });
 };
 

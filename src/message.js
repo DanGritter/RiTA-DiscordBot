@@ -194,6 +194,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
                             Welche Sprache sprechen Sie?
                             ¿Qué idioma hablas?
                             あなたは何語を話しますか?
+                            Quelle langue parles-tu ?
                             На каком языке вы говорите?`,
          components: [btnrow2]
       });
@@ -203,6 +204,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
                              In welcher Allianz bist du?
                              ¿En qué alianza estás?
                              あなたはどの同盟に属していますか?
+                             Dans quelle alliance appartenez-vous ?
                              В каком альянсе вы состоите?`,
          components: [btnrow]
       });
@@ -212,6 +214,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
                              Welchen Rang hast du?
                              ¿Que rango tienes?
                              あなたはどのランクを保持していますか？
+                             Quel est votre rang ?
                              Какой у вас ранг?`,
          components: [btnrow3]
       });

@@ -361,8 +361,14 @@ exports.listen = function(client)
                     ${guildmember.guild} へようこそ!
                     言語と同盟を設定するには、<#${auth.setupChannel}> にアクセスしてください。
 
-                    Willkommen bei ${guildmember.guild}
-                    Bitte gehen Sie zu <#${auth.setupChannel}>, um Sprachen und Allianzen einzurichten!`);
+                    Willkommen bei ${guildmember.guild}!
+                    Bitte gehen Sie zu <#${auth.setupChannel}>, um Sprachen und Allianzen einzurichten!
+
+                    Bienvenue sur ${guildmember.guild}!
+                    Veuillez vous rendre sur <#${auth.setupChannel}> pour configurer les langues et l'alliance!`
+
+
+            );
          }
          else
          {

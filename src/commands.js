@@ -9,6 +9,8 @@ const languages = [ {name: "English",
    value: "Russian"},
 {name: "Spanish",
    value: "Spanish"},
+{name: "French",
+   value: "French"},
 {name: "Japanese",
    value: "Japanese"} ];
 
@@ -176,7 +178,7 @@ const commands = [
          },
          {
             name: "setup",
-            description: "list groups",
+            description: "setup group tasks",
             "type": ApplicationCommandOptionType.Subcommand,
             options: [
                {
