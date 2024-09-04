@@ -4,7 +4,7 @@
 
 const alliances = ["555", "DIF", "FNB", "KSM", "LoU", "OGs", "OPG", "OPS", "PrO","TAR", "TDS", "TIR", "wlf", "WTF"];
 
-const languages = ["English", "Russian", "German", "Spanish", "Japanese","French", "Thai", "Portugese"];
+const languages = ["English", "Russian", "German", "Spanish", "Japanese","French", "Thai", "Portuguese"];
 
 const langMap = {"English": "en-US",
    "French": "fr-FR",
@@ -13,7 +13,7 @@ const langMap = {"English": "en-US",
    "Russian": "ru-RU",
    "German": "de-DE",
    "Thai": "th-TH",
-   "Portugese": "pt-PT"};
+   "Portuguese": "pt-PT"};
 
 const cmdLang = [ {name: "English",
    value: "English"},
@@ -29,8 +29,8 @@ const cmdLang = [ {name: "English",
    value: "Japanese"},
 {name: "Thai",
    value: "Thai"},
-{name: "Portugese",
-   value: "Portugese"}
+{name: "Portuguese",
+   value: "Portuguese"}
 ];
 
 const language_labels = ["English", "Русский", "Deutsch", "Español", "日本語", "Français", "ภาษาไทย", "Português" ];

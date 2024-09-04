@@ -526,7 +526,7 @@ exports.getGroups = function(data, cb)
 {
    return Groups.findAll({ where: { server: data.server},
       group: ["name"],
-      attributes: ["server","name"]}, {raw: true}).then(
+      attributes: ["name"]}, {raw: true}).then(
       function (result, err)
       {
          cb(err, result);

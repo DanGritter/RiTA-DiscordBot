@@ -224,7 +224,7 @@ module.exports.list = function(data)
             {
                result.forEach(row =>
                {
-                  const text = `${row.dataValues.server}.${row.dataValues.name}\n`;
+                  const text = `Group: ${row.dataValues.name}\n`;
                   data.interaction.followUp({content: text,
                      ephemeral: true});
                });
