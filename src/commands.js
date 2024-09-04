@@ -1,18 +1,6 @@
 const { ApplicationCommandOptionType } = require("discord-api-types/v10");
 const { ChannelType } = require("discord.js");
-
-const languages = [ {name: "English",
-   value: "English"},
-{name: "German",
-   value: "German"},
-{name: "Russian",
-   value: "Russian"},
-{name: "Spanish",
-   value: "Spanish"},
-{name: "French",
-   value: "French"},
-{name: "Japanese",
-   value: "Japanese"} ];
+const { cmdLang } = require("./core/languages.js");
 
 const commands = [
    // 0
@@ -21,7 +9,7 @@ const commands = [
       description: "translate text via command",
       options: [
          {
-            choices: languages,
+            choices: cmdLang,
             "type": ApplicationCommandOptionType.String,
             name: "to",
             description: "language to convert text to",
@@ -34,7 +22,7 @@ const commands = [
             required: true
          },
          {
-            choices: languages,
+            choices: cmdLang,
             "type": ApplicationCommandOptionType.String,
             name: "from",
             description: "language text is in"
@@ -47,14 +35,14 @@ const commands = [
       description: "translate last messages",
       options: [
          {
-            choices: languages,
+            choices: cmdLang,
             "type": ApplicationCommandOptionType.String,
             name: "to",
             description: "language to convert text to",
             required: true
          },
          {
-            choices: languages,
+            choices: cmdLang,
             "type": ApplicationCommandOptionType.String,
             name: "from",
             description: "language text is in"
@@ -74,14 +62,14 @@ const commands = [
       description: "Create channel translation ",
       options: [
          {
-            choices: languages,
+            choices: cmdLang,
             "type": ApplicationCommandOptionType.String,
             name: "to",
             description: "language to convert text to",
             required: true
          },
          {
-            choices: languages,
+            choices: cmdLang,
             "type": ApplicationCommandOptionType.String,
             name: "from",
             description: "language text is in"
@@ -121,7 +109,7 @@ const commands = [
                   required: true
                },
                {
-                  choices: languages,
+                  choices: cmdLang,
                   "type": ApplicationCommandOptionType.String,
                   name: "lang",
                   description: "language this channel uses",
@@ -157,7 +145,7 @@ const commands = [
                   channel_types: [ChannelType.GuildText]
                },
                {
-                  choices: languages,
+                  choices: cmdLang,
                   "type": ApplicationCommandOptionType.String,
                   name: "lang",
                   description: "language to remove from group"

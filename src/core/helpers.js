@@ -141,7 +141,7 @@ exports.getRole = function(client, guild, role, cb)
    {
       return cb(foundRole);
    }
-   guild.roles.cache.fetch().then(roles =>
+   guild.roles.fetch().then(roles =>
    {
       foundRole = roles.find(f => f.name === role);
       return cb(foundRole);

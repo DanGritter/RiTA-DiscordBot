@@ -355,6 +355,7 @@ exports.listen = function(client)
 
                     Welcome to ${guildmember.guild}!
                     Please go to <#${auth.setupChannel}> to setup languages and alliance!
+
                     ¡Bienvenido a ${guildmember.guild}!
                     ¡Vaya a <#${auth.setupChannel}> para configurar los idiomas y la alianza!
 
@@ -365,9 +366,13 @@ exports.listen = function(client)
                     Bitte gehen Sie zu <#${auth.setupChannel}>, um Sprachen und Allianzen einzurichten!
 
                     Bienvenue sur ${guildmember.guild}!
-                    Veuillez vous rendre sur <#${auth.setupChannel}> pour configurer les langues et l'alliance!`
+                    Veuillez vous rendre sur <#${auth.setupChannel}> pour configurer les langues et l'alliance!
+                    
+                    ยินดีต้อนรับสู่ ${guildmember.guild}!
+                    โปรดไปที่ <#${auth.setupChannel}> เพื่อตั้งค่าภาษาและพันธมิตร! 
 
-
+                    Bem-vindo ao ${guildmember.guild}!
+                    Vá para <#${auth.setupChannel}> para configurar idiomas e aliança!`
             );
          }
          else
