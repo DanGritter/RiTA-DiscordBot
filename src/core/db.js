@@ -197,7 +197,7 @@ exports.updateServerLang = function(id, lang, _cb)
 };
 exports.updateServerWelcomeChannel = function(id, welcomeChannel, _cb)
 {
-   return Servers.update({ welcomeChannel: welcomeChannel }, { where: { id: id } }).then(
+   return Servers.update({ welcome: welcomeChannel }, { where: { id: id } }).then(
       function ()
       {
          _cb();
@@ -205,7 +205,7 @@ exports.updateServerWelcomeChannel = function(id, welcomeChannel, _cb)
 };
 exports.updateServerSetupChannel = function(id, setupChannel, _cb)
 {
-   return Servers.update({ setupChannel: setupChannel }, { where: { id: id } }).then(
+   return Servers.update({ setup: setupChannel }, { where: { id: id } }).then(
       function ()
       {
          _cb();
