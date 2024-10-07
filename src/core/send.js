@@ -439,7 +439,7 @@ const embedOff = function(data)
                content = `[(^)](${data.link})`;
             }
          }
-	 if (content.length <= 2000)
+         if (content.length <= 2000)
          {
             webhook.send({content: content,
                color: colors.get(data.color),
@@ -448,7 +448,7 @@ const embedOff = function(data)
                //            reply: {messageReference: ref},
                files: files
             });
-	 }
+         }
          else
          {
             let pos = 0;
@@ -459,9 +459,9 @@ const embedOff = function(data)
                if (content.length > 2000)
                {
                   const index = content.substring(0,2000).lastIndexOf(" ");
-		    send = content.substring(0,index);
+                  send = content.substring(0,index);
                   content = content.substring(index);
-	       }
+               }
                else {send = content;}
                if (pos == 0)
                {
@@ -471,18 +471,18 @@ const embedOff = function(data)
                      avatarURL: avatarURL,
                      //            reply: {messageReference: ref},
                      files: files
-	         });
-	       }
+                  });
+               }
                else
                {
                   webhook.send({content: send,
                      color: colors.get(data.color),
                      username: username,
                      avatarURL: avatarURL});
-	       }
+               }
                pos += send.length;
-	    }
-	 }
+            }
+         }
       }
    }
 

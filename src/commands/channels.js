@@ -21,20 +21,20 @@ module.exports = function(data)
    {
       if (data.welcome)
       {
-	   db.updateServerWelcomeChannel(data.interaction.guild.id, data.welcome.id, cbdata=>
+         db.updateServerWelcomeChannel(data.interaction.guild.id, data.welcome.id, cbdata=>
          {
             data.interaction.followUp({content: `set welcome channel to ${data.welcome}`,
                ephemeral: true});
-	   });
+         });
       }
 
       if (data.setup)
       {
-	   db.updateServerSetupChannel(data.interaction.guild.id, data.setup.id, cbdata=>
+         db.updateServerSetupChannel(data.interaction.guild.id, data.setup.id, cbdata=>
          {
             data.interaction.followUp({content: `set setup channel to ${data.setup}`,
                ephemeral: true});
-	   });
+         });
       }
    });
 };

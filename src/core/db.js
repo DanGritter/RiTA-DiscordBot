@@ -78,10 +78,12 @@ const Servers = db.define("servers", {
       defaultValue: "off"
    },
    welcome: {
-	   type: Sequelize.STRING(32)
+      type: Sequelize.STRING(32),
+      defaultValue: ""
    },
    setup: {
-	   type: Sequelize.STRING(32)
+      type: Sequelize.STRING(32),
+      defaultValue: ""
    }
 });
 
@@ -269,6 +271,7 @@ module.exports.setBot2BotVar = function(data)
 
 exports.updateColumns = function(data)
 {
+   console.log("updating columns");
    // Very sloppy code, neew to find a better fix.
    db.query(`ALTER TABLE public.servers ADD COLUMN "embedstyle" character varying(8) COLLATE pg_catalog."default" DEFAULT 'on'::character varying;`,function(err)
    {
@@ -650,6 +653,7 @@ exports.getStats = function(callback)
 
 exports.getServerInfo = function(id, callback)
 {
+   console.log("Get server info");
    return db.query(`select * from (select count as "count",` +
    `lang as "lang" from servers where id = ?) as table1,` +
    `(select count(distinct origin) as "activeTasks"` +
@@ -658,8 +662,8 @@ exports.getServerInfo = function(id, callback)
    `from tasks where origin like '@%' and server = ?) as table3, ` +
    `(select embedstyle as "embedstyle" from servers where id = ?) as table4, ` +
    `(select bot2botstyle as "bot2botstyle" from servers where id = ?) as table5, ` +
-	   `(select welcome as "welcome" from servers where id = ?) as table6, ` +
-	   `(select setup as "setup" from servers where id = ?) as table7;`, { replacements: [ id, id, id, id, id, id, id],
+           `(select welcome as "welcome" from servers where id = ?) as table6, ` +
+           `(select setup as "setup" from servers where id = ?) as table7;`, { replacements: [ id, id, id, id, id, id, id],
       type: db.QueryTypes.SELECT})
       .then(
          result => callback(result),

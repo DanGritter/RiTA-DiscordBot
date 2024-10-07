@@ -135,9 +135,9 @@ exports.listen = function(client)
       {
          console.log("Registered Guild Commands");
       });
-	   // let guild = '1232022160437149736';
+      // let guild = '1232022160437149736';
       // {
-	   //         console.log(`registering guild commands for ${guild}`);
+      //         console.log(`registering guild commands for ${guild}`);
       //    try
       //    {
       //       rest.put(
