@@ -111,27 +111,11 @@ module.exports = function(data)
       });
    }
 
-   db.getEmbedVar(guildValue);
-
-   if (db.setEmbedVar() === "")
-   {
-      //      // eslint-disable-next-line no-unused-expressions
-      //      db.setEmbedVar;
-      //      console.log(`db.set Stage 2 = ` + db.setEmbedVar());
-      //      var output =
-      //      "**:robot: " + data.bot.username + " has restarted\n\n" +
-      //      " :gear: Please resend your previous message.**\n\n" +
-      //      "  :wrench: You may need to define the embed value using `!t embed on/off` if this message is in a loop when sending commands/messages.";
-      //      data.color = "warn";
-      //      data.text = output;
-      //      return ignoreMessage();
-   }
-
    // --------------------
    // Primary If Statment
    // --------------------
 
-   if (db.setEmbedVar() === "on")
+   if (false) // eslint-disable-line no-constant-condition
    {
       embedOn(data);
    }
@@ -455,13 +439,50 @@ const embedOff = function(data)
                content = `[(^)](${data.link})`;
             }
          }
-         webhook.send({content: content,
-            color: colors.get(data.color),
-            username: username,
-            avatarURL: avatarURL,
-            //            reply: {messageReference: ref},
-            files: files
-         });
+	 if (content.length <= 2000)
+         {
+            webhook.send({content: content,
+               color: colors.get(data.color),
+               username: username,
+               avatarURL: avatarURL,
+               //            reply: {messageReference: ref},
+               files: files
+            });
+	 }
+         else
+         {
+            let pos = 0;
+            const clength = content.length;
+            while (pos < clength)
+            {
+               let send = "";
+               if (content.length > 2000)
+               {
+                  const index = content.substring(0,2000).lastIndexOf(" ");
+		    send = content.substring(0,index);
+                  content = content.substring(index);
+	       }
+               else {send = content;}
+               if (pos == 0)
+               {
+                  webhook.send({content: send,
+                     color: colors.get(data.color),
+                     username: username,
+                     avatarURL: avatarURL,
+                     //            reply: {messageReference: ref},
+                     files: files
+	         });
+	       }
+               else
+               {
+                  webhook.send({content: send,
+                     color: colors.get(data.color),
+                     username: username,
+                     avatarURL: avatarURL});
+	       }
+               pos += send.length;
+	    }
+	 }
       }
    }
 

@@ -416,7 +416,7 @@ exports.processAttachments = function(data,cb)
                });
             }
          }
-         else
+         else if (attachment.contentType.startsWith("image"))
          {
             const promise = module.exports.textDetection(attachment.url,(paragraphs,err) =>
             {
