@@ -2,9 +2,9 @@
 // Global variables
 // -----------------
 
-const alliances = ["555", "DIF", "FNB", "KSM", "LoU", "OGs", "OPG", "OPS", "PrO","TAR", "TDS", "TIR", "wlf", "WTF"];
+const alliances = ["555", "BOA", "DIF", "FNB", "KSM", "OGs", "OPG", "OPS", "PrO","TAR", "TDS", "TIR", "wlf"];
 
-const languages = ["English", "Russian", "German", "Spanish", "Japanese","French", "Thai", "Portuguese"];
+const languages = ["English", "Russian", "German", "Spanish", "Japanese","French"];
 
 const langMap = {"English": "en-US",
    "French": "fr-FR",
@@ -26,14 +26,10 @@ const cmdLang = [ {name: "English",
 {name: "French",
    value: "French"},
 {name: "Japanese",
-   value: "Japanese"},
-{name: "Thai",
-   value: "Thai"},
-{name: "Portuguese",
-   value: "Portuguese"}
+   value: "Japanese"}
 ];
 
-const language_labels = ["English", "Русский", "Deutsch", "Español", "日本語", "Français", "ภาษาไทย", "Português" ];
+const language_labels = ["English", "Русский", "Deutsch", "Español", "日本語", "Français"];
 
 const ranks = ["R5", "R4", "R3", "R2", "R1"];
 

@@ -257,46 +257,26 @@ const commands = [
          }
       ]
    },
-   //        {
-   //    "name": "permissions",
-   //    "description": "Get or edit permissions for a user or a role",
-   //    "options": [
-   //        {
-   //            "name": "user",
-   //            "description": "Get or edit permissions for a user",
-   //            "type": 2, // 2 is type SUB_COMMAND_GROUP
-   //            "options": [
-   //                {
-   //                    "name": "get",
-   //                    "description": "Get permissions for a user",
-   //                    "type": 1 // 1 is type SUB_COMMAND
-   //                },
-   //                {
-   //                    "name": "edit",
-   //                    "description": "Edit permissions for a user",
-   //                    "type": 1
-   //                }
-   //            ]
-   //        },
-   //        {
-   //            "name": "role",
-   //            "description": "Get or edit permissions for a role",
-   //            "type": 2,
-   //            "options": [
-   //                {
-   //                    "name": "get",
-   //                    "description": "Get permissions for a role",
-   //                    "type": 1
-   //                },
-   //                {
-   //                    "name": "edit",
-   //                    "description": "Edit permissions for a role",
-   //                    "type": 1
-   //                }
-   //            ]
-   //        }
-   //    ]
-   //},
+   {
+      name: "server",  
+      description: "interact with tasks",
+      options: [
+         {
+            name: "welcome",
+            description: "welcome channel",
+            "type": ApplicationCommandOptionType.Channel,
+            channel_types: [ChannelType.GuildText],
+            required: false
+         },
+         {
+            name: "setup",
+            description: "setup channel",
+            "type": ApplicationCommandOptionType.Channel,
+            channel_types: [ChannelType.GuildText],
+            required: false
+         }
+      ]
+   },
    {
       name: "info",
       description: "information about translations"

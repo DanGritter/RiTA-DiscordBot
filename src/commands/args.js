@@ -19,6 +19,7 @@ const cmdVersion = require("./version");
 const cmdEmbed = require("./embed");
 const cmdMisc = require("./misc");
 const cmdSettings = require("./settings");
+const cmdChannels = require("./channels");
 const cmdTranslateLast = require("./translate.last");
 const cmdTranslateThis = require("./translate.this");
 const cmdTranslateAuto = require("./translate.auto");
@@ -37,6 +38,7 @@ const cmdMap = {
    "info": cmdHelp,
    "list": cmdList,
    "stats": cmdStats,
+   "server": cmdChannels,
    //  "embed": cmdEmbed.run,
    "version": cmdVersion,
    "invite": cmdMisc.invite,
@@ -184,6 +186,9 @@ module.exports.ParseInteraction = function(data)
       data.channel = data.options.getChannel("channel");
       const current = data.options.getBoolean("current");
       if (current) {data.channel = data.interaction.channel;}
+   } else if (output.main === "server") {
+      data.welcome = data.options.getChannel("welcome");
+      data.setup = data.options.getChannel("setup");
    }
    if (data.options.data.length > 0)
    {

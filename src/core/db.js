@@ -76,6 +76,12 @@ const Servers = db.define("servers", {
    bot2botstyle: {
       type: Sequelize.STRING(8),
       defaultValue: "off"
+   },
+   welcome: {
+	   type: Sequelize.STRING(32)
+   },
+   setup: {
+	   type: Sequelize.STRING(32)
    }
 });
 
@@ -182,6 +188,22 @@ exports.removeServer = function(id)
 exports.updateServerLang = function(id, lang, _cb)
 {
    return Servers.update({ lang: lang }, { where: { id: id } }).then(
+      function ()
+      {
+         _cb();
+      });
+};
+exports.updateServerWelcomeChannel = function(id, welcomeChannel, _cb)
+{
+   return Servers.update({ welcomeChannel: welcomeChannel }, { where: { id: id } }).then(
+      function ()
+      {
+         _cb();
+      });
+};
+exports.updateServerSetupChannel = function(id, setupChannel, _cb)
+{
+   return Servers.update({ setupChannel: setupChannel }, { where: { id: id } }).then(
       function ()
       {
          _cb();
@@ -313,6 +335,28 @@ exports.updateColumns = function(data)
       else
       {
          console.log("bot2botstyle column added");
+      }
+   });
+   db.query(`ALTER TABLE servers ADD COLUMN "setup" character varying(32) COLLATE pg_catalog."default";`,function(err)
+   {
+      if (err)
+      {
+         console.log("ERROR:"+err.message);
+      }
+      else
+      {
+         console.log("setup column added");
+      }
+   });
+   db.query(`ALTER TABLE servers ADD COLUMN "welcome" character varying(32) COLLATE pg_catalog."default";`,function(err)
+   {
+      if (err)
+      {
+         console.log("ERROR:"+err.message);
+      }
+      else
+      {
+         console.log("welcome column added");
       }
    });
 };
@@ -631,7 +675,9 @@ exports.getServerInfo = function(id, callback)
    `(select count(distinct origin) as "activeUserTasks"` +
    `from tasks where origin like '@%' and server = ?) as table3, ` +
    `(select embedstyle as "embedstyle" from servers where id = ?) as table4, ` +
-   `(select bot2botstyle as "bot2botstyle" from servers where id = ?) as table5;`, { replacements: [ id, id, id, id, id],
+   `(select bot2botstyle as "bot2botstyle" from servers where id = ?) as table5, ` +
+	   `(select welcome as "welcome" from servers where id = ?) as table6, ` +
+	   `(select setup as "setup" from servers where id = ?) as table7;`, { replacements: [ id, id, id, id, id, id, id],
       type: db.QueryTypes.SELECT})
       .then(
          result => callback(result),

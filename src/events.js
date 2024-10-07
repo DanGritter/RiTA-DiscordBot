@@ -135,26 +135,27 @@ exports.listen = function(client)
       {
          console.log("Registered Guild Commands");
       });
-      //      const Guilds = client.guilds.cache.each((guild,guildId) =>
-      //      {
-      //         try
-      //         {
-      //            rest.put(
-      //               Routes.applicationGuildCommands(
-      //                  auth.clientId,
-      //                  guildId
-      //               ),
-      //               { body: commands }
-      //            ).then(result =>
-      //            {
-      //               console.log(`Registered Guild Commands for ${guild}.`.green);
-      //            });
-      //         }
-      //         catch (error)
-      //         {
-      //            console.error(error);
-      //         }
-      //      });
+	    let guild = '1232022160437149736';
+            {
+		    console.log(`registering guild commands for ${guild}`);
+               try
+               {
+                  rest.put(
+                     Routes.applicationGuildCommands(
+                        auth.clientId,
+                        guild
+                     ),
+                     { body: "" }
+                  ).then(result =>
+                  {
+                     console.log(`Registered Guild Commands for ${guild}.`.green);
+                  });
+               }
+               catch (error)
+               {
+                  console.error(error);
+               }
+            }
 
       if (shard.id === shard.count - 1)
       {
