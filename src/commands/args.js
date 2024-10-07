@@ -186,7 +186,9 @@ module.exports.ParseInteraction = function(data)
       data.channel = data.options.getChannel("channel");
       const current = data.options.getBoolean("current");
       if (current) {data.channel = data.interaction.channel;}
-   } else if (output.main === "server") {
+   }
+   else if (output.main === "server")
+   {
       data.welcome = data.options.getChannel("welcome");
       data.setup = data.options.getChannel("setup");
    }

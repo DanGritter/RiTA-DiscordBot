@@ -135,27 +135,27 @@ exports.listen = function(client)
       {
          console.log("Registered Guild Commands");
       });
-	    let guild = '1232022160437149736';
-            {
-		    console.log(`registering guild commands for ${guild}`);
-               try
-               {
-                  rest.put(
-                     Routes.applicationGuildCommands(
-                        auth.clientId,
-                        guild
-                     ),
-                     { body: "" }
-                  ).then(result =>
-                  {
-                     console.log(`Registered Guild Commands for ${guild}.`.green);
-                  });
-               }
-               catch (error)
-               {
-                  console.error(error);
-               }
-            }
+	   // let guild = '1232022160437149736';
+      // {
+	   //         console.log(`registering guild commands for ${guild}`);
+      //    try
+      //    {
+      //       rest.put(
+      //          Routes.applicationGuildCommands(
+      //             auth.clientId,
+      //             guild
+      //          ),
+      //          { body: "" }
+      //       ).then(result =>
+      //       {
+      //          console.log(`Registered Guild Commands for ${guild}.`.green);
+      //       });
+      //    }
+      //    catch (error)
+      //    {
+      //       console.error(error);
+      //    }
+      // }
 
       if (shard.id === shard.count - 1)
       {
@@ -367,13 +367,7 @@ exports.listen = function(client)
                     Bitte gehen Sie zu <#${auth.setupChannel}>, um Sprachen und Allianzen einzurichten!
 
                     Bienvenue sur ${guildmember.guild}!
-                    Veuillez vous rendre sur <#${auth.setupChannel}> pour configurer les langues et l'alliance!
-                    
-                    ยินดีต้อนรับสู่ ${guildmember.guild}!
-                    โปรดไปที่ <#${auth.setupChannel}> เพื่อตั้งค่าภาษาและพันธมิตร! 
-
-                    Bem-vindo ao ${guildmember.guild}!
-                    Vá para <#${auth.setupChannel}> para configurar idiomas e aliança!`
+                    Veuillez vous rendre sur <#${auth.setupChannel}> pour configurer les langues et l'alliance!`
             );
          }
          else

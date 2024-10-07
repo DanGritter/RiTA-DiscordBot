@@ -259,19 +259,59 @@ module.exports.remove = function(data)
    data.interaction.deferReply({content: "Removing group",
       ephemeral: true}).then(value =>
    {
-      db.remGroup(data.group, count =>
+      if (data.group.name)
       {
-         if (count > 0)
+         db.remGroup(data.group, count =>
          {
-            data.interaction.followUp({content: `Removed ${count} group entries`,
-               ephemeral: true});
-         }
-         else
+            if (count > 0)
+            {
+               data.interaction.followUp({content: `Removed ${count} group entries`,
+                  ephemeral: true});
+            }
+            else
+            {
+               data.interaction.followUp({content: "No groups removed",
+                  ephemeral: true});
+            }
+         });
+      }
+      else
+      {
+         db.getGroups(data.group,(err,result)=>
          {
-            data.interaction.followUp({content: "No groups removed",
-               ephemeral: true});
-         }
-      });
+            if (err)
+            {
+               data.interaction.followUp({content: "Couldn't get group list",
+                  ephemeral: true});
+            }
+            else
+            if (result.length > 0)
+            {
+               result.forEach(row =>
+               {
+                  data.group.name = row.dataValues.name;
+                  db.remGroup(data.group, count =>
+                  {
+                     if (count > 0)
+                     {
+                        data.interaction.followUp({content: `Removed ${count} group entries`,
+                           ephemeral: true});
+                     }
+                     else
+                     {
+                        data.interaction.followUp({content: `Nothing removed for ${row.dataValues.name}`,
+                           ephemeral: true});
+                     }
+                  });
+               });
+            }
+            else
+            {
+               data.interaction.followUp({content: "No groups defined",
+                  ephemeral: true});
+            }
+         });
+      }
    });
 };
 

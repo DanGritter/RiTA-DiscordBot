@@ -195,9 +195,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
                             ¿Qué idioma hablas?
                             あなたは何語を話しますか?
                             Quelle langue parles-tu ?
-                            На каком языке вы говорите?
-                            คุณพูดภาษาอะไร?
-                            Qual o idioma que fala?`,
+                            На каком языке вы говорите?`,
          components: [btnrow2]
       });
       channel.send({
@@ -207,9 +205,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
                              ¿En qué alianza estás?
                              あなたはどの同盟に属していますか?
                              Dans quelle alliance appartenez-vous ?
-                             В каком альянсе вы состоите?
-                             คุณอยู่ในพันธมิตรไหน?
-                             Em que aliança está?`,
+                             В каком альянсе вы состоите?`,
          components: [btnrow]
       });
       channel.send({
@@ -219,9 +215,7 @@ module.exports.messageHandler = async function(config, message, edited, deleted)
                              ¿Que rango tienes?
                              あなたはどのランクを保持していますか？
                              Quel est votre rang ?
-                             Какой у вас ранг?
-                             คุณอยู่อันดับที่เท่าไหร่?
-                             Em que classificação está?`,
+                             Какой у вас ранг?`,
          components: [btnrow3]
       });
       return;

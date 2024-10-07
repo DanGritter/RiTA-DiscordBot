@@ -258,7 +258,7 @@ const commands = [
       ]
    },
    {
-      name: "server",  
+      name: "server",
       description: "interact with tasks",
       options: [
          {
